@@ -1,0 +1,41 @@
+
+import sbnz.integracija.model.Food;
+import sbnz.integracija.model.Recipe;
+import sbnz.integracija.model.GroupA;
+
+rule "Broj sastojaka koji zadovoljavaju recept"
+	no-loop
+	lock-on-active true
+    when    
+    	 $d : Recipe( $ingredients : ingredients )
+    	 $f:  Food( $f memberOf $ingredients )
+         accumulate ( 
+         		$i : Food( $i memberOf $ingredients );
+        		$count : count($i)
+        		)
+    then
+    	modify($d){ setNumIngredients($count); }
+end
+
+
+rule "Broj sastojaka koji zadovoljavaju recept veci od minimalnog broja"	
+    when    
+    	 $d : Recipe(groupOfRecipe == GroupA.FIRST, minimumOI < numIngredients )
+    	 
+    then
+    	modify($d){ setFlag(true); }
+end
+
+rule "Recept sadrzi sve sastojke"	
+    when    
+    	 $d : Recipe(groupOfRecipe == GroupA.SECOND,  ingredients.size() == numIngredients )
+    	 
+    then
+    
+    	modify($d){ setFlag(true); }
+end
+
+
+
+
+
