@@ -23,6 +23,11 @@ public class UserController {
 	@GetMapping("/calories")
 	public String getRecommendedIntake(@RequestParam ("weight") int weight, 
 			@RequestParam ("gender") String gender, @RequestParam ("activity") String activity) {
-		return userService.getGoalAndRecommendedIntake(weight, gender, activity);
+		return userService.getRecommendedIntake(weight, gender, activity);
+	}
+	
+	@GetMapping("/recommendedCalories")
+	public String getRecommendedCalories(@RequestParam ("goal") String goal) {
+		return userService.getRecommendedCalories(goal);
 	}
 }

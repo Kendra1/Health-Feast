@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import sbnz.integracija.enumeration.Activity;
 import sbnz.integracija.enumeration.Gender;
+import sbnz.integracija.enumeration.Goal;
 import sbnz.integracija.enumeration.UserStatus;
 import sbnz.integracija.facts.User;
 
@@ -34,7 +35,7 @@ public class UserService {
 		return user.getUserStatus();
 	}
 	
-	public String getGoalAndRecommendedIntake(int weight, String gender, String activity) {
+	public String getRecommendedIntake(int weight, String gender, String activity) {
 		KieSession kieSession = kieContainer.newKieSession();
 		
 		User user = new User();
@@ -48,5 +49,27 @@ public class UserService {
 		kieSession.dispose();
 		
 		return String.format("Daily intake of calories is: %s", user.getDailyCalorieIntake());
+	}
+	
+	public String getRecommendedCalories(String goal) {
+		KieSession kieSession = kieContainer.newKieSession();
+		
+		User user = new User();
+		
+		user.setWeight(150);
+		user.setGender(Gender.MALE);
+		user.setActivity(Activity.HEAVY);
+		
+		kieSession.insert(user);
+		kieSession.fireAllRules();	
+
+		if (user.getDailyCalorieIntake() != 0) {
+			user.setGoal(Goal.valueOf(goal));
+			kieSession.insert(user);
+			kieSession.fireAllRules();	
+			kieSession.dispose();
+		}
+		
+		return String.format("Recommended intake of calories for your goal is: %s", user.getDailyCalorieIntake());
 	}
 }

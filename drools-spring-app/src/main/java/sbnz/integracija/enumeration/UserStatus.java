@@ -1,5 +1,5 @@
 package sbnz.integracija.enumeration;
 
 public enum UserStatus {
-BEGGINER, BRONZE, SILVER, GOLD, PLATINUM
+	BEGGINER, BRONZE, SILVER, GOLD, PLATINUM
 }

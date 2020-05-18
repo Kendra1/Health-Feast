@@ -2,6 +2,8 @@ package sbnz.integracija;
 
 import sbnz.integracija.facts.User;
 import sbnz.integracija.enumeration.Gender;
+import sbnz.integracija.enumeration.Goal;
+
 
 rule "Set activity - very light"
     when
@@ -58,5 +60,38 @@ rule "Calculate daily calorie intake for women"
     	$user: User(gender == Gender.FEMALE, activityCount != null, $calories: (weight * 0.9 * 24.0 * activityCount))
     then
         $user.setDailyCalorieIntake($calories);
+        update($user);
+end
+
+rule "Goal gain weight"
+    when
+    	$user: User(goal == Goal.GAIN_WEIGHT, $recommended: (dailyCalorieIntake * 1.5))
+    then
+        $user.setDailyCalorieIntake($recommended);
+        update($user);
+end
+
+rule "Goal lose weight"
+    when
+    	$user: User(goal == Goal.LOSE_WEIGHT, $recommended: (dailyCalorieIntake * 0.5))
+    then
+        $user.setDailyCalorieIntake($recommended);
+        System.out.println($recommended);
+        update($user);
+end
+
+rule "Goal gain musle"
+    when
+    	$user: User(goal == Goal.GAIN_MUSCLE, $recommended: (dailyCalorieIntake * 1.3))
+    then
+        $user.setDailyCalorieIntake($recommended);
+        update($user);
+end
+
+rule "Goal lose muscle"
+    when
+    	$user: User(goal == Goal.LOSE_MUSCLE, $recommended: (dailyCalorieIntake * 0.7))
+    then
+        $user.setDailyCalorieIntake($recommended);
         update($user);
 end

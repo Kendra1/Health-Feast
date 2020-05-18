@@ -6,7 +6,9 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Transient;
 
+import sbnz.integracija.enumeration.Activity;
 import sbnz.integracija.enumeration.Gender;
 import sbnz.integracija.enumeration.Goal;
 import sbnz.integracija.enumeration.Role;
@@ -17,14 +19,18 @@ import sbnz.integracija.enumeration.UserStatus;
 public class User extends Person {
 	
 	private int height;
-	private int weight;
+	private double weight;
 	private int age;
 	private Gender gender;
 	private Goal goal;
 	private double accountBalance;
 	private double purchasePoints;
-	private UserStatus accountStatus;
+	private UserStatus userStatus;
 	private double dailyCalorieIntake;
+	private Activity activity;
+	
+	@Transient
+	private double activityCount;
 	
 	@OneToMany(mappedBy = "user")
 	private List<MealHistory> mealHistory;
@@ -32,6 +38,8 @@ public class User extends Person {
 	@OneToMany(mappedBy = "user")
 	private List<WorkoutHistory> workoutHistory;
 
+	public User() {}
+	
 	public User(String name, String lastName, String email, String username, String password, Date birthDate, Role role,
 			int height, int weight, int age, Gender gender, Goal goal, double accountBalance, double purchasePoints,
 			UserStatus accountStatus, double dailyCalorieIntake, List<MealHistory> mealHistory,
@@ -44,7 +52,7 @@ public class User extends Person {
 		this.goal = goal;
 		this.accountBalance = accountBalance;
 		this.purchasePoints = purchasePoints;
-		this.accountStatus = accountStatus;
+		this.userStatus = accountStatus;
 		this.dailyCalorieIntake = dailyCalorieIntake;
 		this.mealHistory = mealHistory;
 		this.workoutHistory = workoutHistory;
@@ -59,11 +67,11 @@ public class User extends Person {
 		this.height = height;
 	}
 
-	public int getWeight() {
+	public double getWeight() {
 		return weight;
 	}
 
-	public void setWeight(int weight) {
+	public void setWeight(double weight) {
 		this.weight = weight;
 	}
 
@@ -107,13 +115,15 @@ public class User extends Person {
 		this.purchasePoints = purchasePoints;
 	}
 
-	public UserStatus getAccountStatus() {
-		return accountStatus;
+	public UserStatus getUserStatus() {
+		return userStatus;
 	}
 
-	public void setAccountStatus(UserStatus accountStatus) {
-		this.accountStatus = accountStatus;
+
+	public void setUserStatus(UserStatus userStatus) {
+		this.userStatus = userStatus;
 	}
+
 
 	public double getDailyCalorieIntake() {
 		return dailyCalorieIntake;
@@ -137,5 +147,23 @@ public class User extends Person {
 
 	public void setWorkoutHistory(List<WorkoutHistory> workoutHistory) {
 		this.workoutHistory = workoutHistory;
+	}
+
+
+	public Activity getActivity() {
+		return activity;
+	}
+
+
+	public void setActivity(Activity activity) {
+		this.activity = activity;
+	}
+
+	public double getActivityCount() {
+		return activityCount;
+	}
+
+	public void setActivityCount(double activityCount) {
+		this.activityCount = activityCount;
 	}
 }

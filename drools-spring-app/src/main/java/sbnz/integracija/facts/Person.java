@@ -23,6 +23,8 @@ public class Person {
 	private Date birthDate;
 	private Role role;
 	
+	public Person() {}
+	
 	public Person(String name, String lastName, String email, String username, String password, Date birthDate,
 			Role role) {
 		super();
