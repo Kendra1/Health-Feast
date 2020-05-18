@@ -1,8 +1,12 @@
 package sbnz.integracija.facts;
 
+import java.util.List;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 public class RelatedRecipes {
@@ -11,16 +15,15 @@ public class RelatedRecipes {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@OneToOne
-	private Recipe firstRecipe;
+	@ManyToOne
+	private Recipe Recipe;
 	
-	@OneToOne
-	private Recipe secondRecipe;
-	
+	@OneToMany
+	private List<Recipe> relatedRecipes;
 
-	public RelatedRecipes(Recipe firstRecipe, Recipe secondRecipe) {
-		this.firstRecipe = firstRecipe;
-		this.secondRecipe = secondRecipe;
+
+	public RelatedRecipes() {
+		super();
 	}
 
 	public Long getId() {
@@ -31,19 +34,21 @@ public class RelatedRecipes {
 		this.id = id;
 	}
 
-	public Recipe getFirstRecipe() {
-		return firstRecipe;
+	public Recipe getRecipe() {
+		return Recipe;
 	}
 
-	public void setFirstRecipe(Recipe firstRecipe) {
-		this.firstRecipe = firstRecipe;
+	public void setRecipe(Recipe recipe) {
+		Recipe = recipe;
 	}
 
-	public Recipe getSecondRecipe() {
-		return secondRecipe;
+	public List<Recipe> getRelatedRecipes() {
+		return relatedRecipes;
 	}
 
-	public void setSecondRecipe(Recipe secondRecipe) {
-		this.secondRecipe = secondRecipe;
+	public void setRelatedRecipes(List<Recipe> relatedRecipes) {
+		this.relatedRecipes = relatedRecipes;
 	}
+	
+	
 }

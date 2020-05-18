@@ -9,7 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 @Entity
-public class Ingredient {
+public class Ingredient extends Meal {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

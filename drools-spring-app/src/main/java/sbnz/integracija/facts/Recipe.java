@@ -15,7 +15,7 @@ import sbnz.integracija.enumeration.Diet;
 import sbnz.integracija.enumeration.Kitchen;
 
 @Entity
-public class Recipe {
+public class Recipe extends Meal{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +32,7 @@ public class Recipe {
 	private Category mealType;
 	private Kitchen kitchenType;
 	private Diet dietType;
+	
 	
 	@OneToOne
 	@JoinColumn(name = "specificIngredient_id")
