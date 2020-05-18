@@ -1,0 +1,18 @@
+package sbnz.integracija;
+
+import sbnz.integracija.facts.User;
+import sbnz.integracija.enumeration.Gender;
+
+rule "Calculate calory intake for today"
+    no-loop
+    lock-on-active true
+    when
+    	$date: Date()
+        $user: User($workoutsHistory: workoutHistory)
+        $workout: Workout($workout memberOf $workoutHistory)
+        accumulate (
+        $calories: Workout($caloriesBurnt memberOf $workout);
+        $count: count($calories)
+    then
+        modify()
+end

@@ -1,0 +1,13 @@
+package sbnz.integracija;
+
+import sbnz.integracija.facts.User;
+import sbnz.integracija.enumeration.Goal;
+
+
+rule "Gain weight"
+    when
+    	$user: User(weight != null && height != null && ((weight / height / height) * 10000 < 18))
+    then
+        $user.setGoal(Goal.GAIN_WEIGHT);
+        update($user);
+end

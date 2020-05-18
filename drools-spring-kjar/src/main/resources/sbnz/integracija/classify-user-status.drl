@@ -1,0 +1,46 @@
+package sbnz.integracija;
+
+import sbnz.integracija.facts.User;
+import sbnz.integracija.enumeration.UserStatus;
+
+
+rule "Classify User - Begginer"
+    when
+        $user: User( purchasePoints < 100)
+    then
+        $user.setUserStatus(UserStatus.BEGGINER);
+        update($user);
+end
+
+rule "Classify User - Bronze"
+    when
+        $user: User( purchasePoints > 100 && purchasePoints < 300)
+    then
+        $user.setUserStatus(UserStatus.BRONZE);
+        update($user);
+end
+
+rule "Classify User - Silver"
+    when
+        $user: User( purchasePoints > 300 && purchasePoints < 500)
+    then
+        $user.setUserStatus(UserStatus.SILVER);
+        update($user);
+end
+
+rule "Classify User - Gold"
+    when
+        $user: User( purchasePoints > 500 && purchasePoints < 700)
+    then
+        $user.setUserStatus(UserStatus.GOLD);
+        update($user);
+end
+
+rule "Classify User - Platinum"
+    when
+        $user: User( purchasePoints > 1000 )
+    then
+        $user.setUserStatus(UserStatus.PLATINUM);
+        update($user);
+end
+

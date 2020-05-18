@@ -1,0 +1,62 @@
+package sbnz.integracija;
+
+import sbnz.integracija.facts.User;
+import sbnz.integracija.enumeration.Gender;
+
+rule "Set activity - very light"
+    when
+        $user: User(activity == Activity.VERY_LIGHT)
+    then
+        $user.setActivityCount(1.3);
+        update($user);
+end
+
+rule "Set activity - light"
+    when
+        $user: User(activity == Activity.LIGHT)
+    then
+        $user.setActivityCount(1.55);
+        update($user);
+end
+
+rule "Set activity - moderate"
+    when
+        $user: User(activity == Activity.MODERATE)
+    then
+        $user.setActivityCount(1.65);
+        update($user);
+end
+
+rule "Set activity - heavy "
+    when
+        $user: User(activity == Activity.HEAVY)
+    then
+        $user.setActivityCount(1.8);
+        update($user);
+end
+
+rule "Set activity - very heavy"
+    when
+        $user: User(activity == Activity.VERY_HEAVY)
+    then
+        $user.setActivityCount(2.0);
+        update($user);
+end
+
+rule "Calculate daily calorie intake for men"
+	salience -100
+    when
+    	$user: User(gender == Gender.MALE, activityCount != null, $calories: (weight * 1.0 * 24.0 * activityCount))
+    then
+        $user.setDailyCalorieIntake($calories);
+        update($user);
+end
+
+rule "Calculate daily calorie intake for women"
+	salience -100
+    when
+    	$user: User(gender == Gender.FEMALE, activityCount != null, $calories: (weight * 0.9 * 24.0 * activityCount))
+    then
+        $user.setDailyCalorieIntake($calories);
+        update($user);
+end
