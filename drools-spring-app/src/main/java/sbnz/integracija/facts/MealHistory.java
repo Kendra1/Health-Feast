@@ -66,7 +66,4 @@ public class MealHistory {
 		this.user = user;
 	}
 	
-	
-	
-	
 }

@@ -15,7 +15,7 @@ import sbnz.integracija.enumeration.Diet;
 import sbnz.integracija.enumeration.Kitchen;
 
 @Entity
-public class Recipe extends Meal{
+public class Recipe extends Meal {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,6 +41,7 @@ public class Recipe extends Meal{
 	public Recipe(String name, List<IngredientQuantity> ingredients, int preparationTime, String instructions,
 			int noOfPeople, Category mealType, Kitchen kitchenType, Diet dietType,
 			Ingredient specificIngredient) {
+		super();
 		this.name = name;
 		this.ingredients = ingredients;
 		this.preparationTime = preparationTime;
