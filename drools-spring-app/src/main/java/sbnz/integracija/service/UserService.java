@@ -32,7 +32,6 @@ public class UserService {
 		kieSession.getAgenda().getAgendaGroup("status").setFocus();
 		kieSession.fireAllRules();		
 		kieSession.dispose();
-		System.out.println(user.getUserStatus());
 		return user.getUserStatus();
 	}
 	

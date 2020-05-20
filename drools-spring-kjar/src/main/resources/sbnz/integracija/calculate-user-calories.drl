@@ -67,7 +67,6 @@ rule "Calculate daily calorie intake for women"
     	$user: User(gender == Gender.FEMALE, activityCount != null, $calories: (weight * 0.9 * 24.0 * activityCount))
     then
         $user.setDailyCalorieIntake($calories);
-      	System.out.println($user.getDailyCalorieIntake());
         update($user);
 end
 
