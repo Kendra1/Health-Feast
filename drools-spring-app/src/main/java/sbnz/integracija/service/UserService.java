@@ -27,11 +27,12 @@ public class UserService {
 		
 		User user = new User();
 		user.setPurchasePoints(purchasePoints);
-		
+		user.setActivity(Activity.VERY_LIGHT);
 		kieSession.insert(user);
+		kieSession.getAgenda().getAgendaGroup("status").setFocus();
 		kieSession.fireAllRules();		
 		kieSession.dispose();
-		
+		System.out.println(user.getUserStatus());
 		return user.getUserStatus();
 	}
 	
@@ -45,6 +46,7 @@ public class UserService {
 		user.setActivity(Activity.valueOf(activity));
 		
 		kieSession.insert(user);
+		kieSession.getAgenda().getAgendaGroup("activity").setFocus();
 		kieSession.fireAllRules();		
 		kieSession.dispose();
 		
@@ -61,11 +63,13 @@ public class UserService {
 		user.setActivity(Activity.HEAVY);
 		
 		kieSession.insert(user);
+		kieSession.getAgenda().getAgendaGroup("activity").setFocus();
 		kieSession.fireAllRules();	
 
 		if (user.getDailyCalorieIntake() != 0) {
 			user.setGoal(Goal.valueOf(goal));
 			kieSession.insert(user);
+			kieSession.getAgenda().getAgendaGroup("activity").setFocus();
 			kieSession.fireAllRules();	
 			kieSession.dispose();
 		}

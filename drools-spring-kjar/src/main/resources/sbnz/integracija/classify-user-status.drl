@@ -6,21 +6,23 @@ import sbnz.integracija.enumeration.UserStatus;
 
 rule "Classify User - Begginer"
     when
-        $user: User( purchasePoints < 100)
+        $user: User( purchasePoints <= 100)
     then
         $user.setUserStatus(UserStatus.BEGGINER);
         update($user);
 end
 
 rule "Classify User - Bronze"
+	agenda-group "status"
     when
-        $user: User( purchasePoints > 100 && purchasePoints < 300)
+        $user: User( purchasePoints > 100 && purchasePoints <= 300)
     then
         $user.setUserStatus(UserStatus.BRONZE);
         update($user);
 end
 
 rule "Classify User - Silver"
+	agenda-group "status"
     when
         $user: User( purchasePoints > 300 && purchasePoints < 500)
     then
@@ -29,14 +31,16 @@ rule "Classify User - Silver"
 end
 
 rule "Classify User - Gold"
+	agenda-group "status"
     when
-        $user: User( purchasePoints > 500 && purchasePoints < 700)
+        $user: User( purchasePoints >= 500 && purchasePoints <= 1000)
     then
         $user.setUserStatus(UserStatus.GOLD);
         update($user);
 end
 
 rule "Classify User - Platinum"
+	agenda-group "status"
     when
         $user: User( purchasePoints > 1000 )
     then
