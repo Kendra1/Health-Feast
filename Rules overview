@@ -1,0 +1,56 @@
+Pravila:
+
+>>>Klik na pretragu
+- Pretraga recepata:
+    * Korisnik je uneo sve namirnice koje postoje u receptu -> vratiti taj recept
+    * Korisnik je uneo neke od namirnica i rekao da zeli da dokupi jos (poseban neki flag za ovo ili kako?) -> vratiti taj recept s manjim prioritetom?
+    * Korisnik je uneo namirnicu koja je specificna za odredjeni recept -> taj recept vratiti prvi
+    
+    * Od prethodnih pravila se dobija lista recepata koju dalje treba filtrirati na osnovu ostalih parametara (ukoliko su uneti):
+        * Gluten free recepti
+        * Veganski recepti
+        * Vegetarijanski recepti
+        * Dairy free recepti
+        * Recepti sa odredjenim mineralima/vitaminima
+        
+        *Recepti koji ne premasuju odredjeno vreme pripreme
+        
+        *Recepti za odredjeni broj ljudi
+        *Recepti koji odgovaraju minimalnom/maksimalnom broju kalorija
+        *Recepti koji imaju sastojke na koje je korisnik alergican
+        *Recepti iz odredjene nacionalne kuhinje
+        
+    * Korisnik je uneo naziv recepta -> vracaju se recepti koji imaju slican/isti naziv
+    
+>>>Klik na recept
+- Pretraga srodnih recepata
+    *Dobija se oznaceni recept -> vraca se lista srodnih recepata
+
+- Savet u ishrani
+    *Dobija se oznaceni recept -> vracaju se upozorenja vezana za namirnice koje recept sadrzi
+    
+>>>Klik na pretragu treninga
+    *Korisnik salje zahtev za pretragu treninga na osnovu parametara (snaga, kardio, trajanje, utrosene kalorije) -> vracaju se treninzi koji se podudaraju za zahtevima
+    
+>>>Backward channing
+-Ispisivanje motivacione poruke korisniku:
+    ,,Bravo na danasnjoj istrajnosti" :
+        preduslovi: (gain weight + premasio broj dnevnih kalorija) / (lose weight + nije dostigao broj dnevnih kalorija) + odradio je trening
+    ,,Aktivirajte se i pazite na ishranu''
+        preduslovi: (gain weight + nije dostigao broj dnevnih kalorija) / (lose weight + premasio broj dnevnih kalorija) + nema odradjenih treninga u toku dana
+    ,,Unosite previse secera''
+        preduslovi: proci kroz meal history i sracunati koliko je uneto secera pa ako je >50g npr
+        
+>>>Resetovanje kalorija
+    -Na svaka 24h (u ponoc najbolje) restartovati broj unetih kalorija u toku dana
+    
+>>>Treninzi
+    -Ukoliko je korisnik uneo da zeli da dobije misicnu masu preporuciti mu 3 puta nedeljno trening snage + 2 puta kardio
+    -Ukoliko je korisnik uneo da zeli da gubi na tezini preporuciti mu 2 puta nedeljno trening snage + 4 puta nedeljno kardio
+    
+>>>Dodavanje novih pravila
+    -Dodavanje novog recepta od strane kuvara
+    
+>>>Hendlanje event-ova
+    -Na svaka 24h (najbolje u ponoc) restartovati broj unesenih kalorija
+    
