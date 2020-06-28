@@ -1,5 +1,6 @@
 package sbnz.integracija.service;
 
+import org.kie.api.event.rule.AgendaEventListener;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,7 @@ public class UserService {
 		kieSession.fireAllRules();		
 		kieSession.dispose();
 		
-		return String.format("Daily intake of calories is: %s", user.getDailyCalorieIntake());
+		return String.format("Recommended daily intake of calories to mantain your current weight is: %s", user.getRecommendedDailyCalories());
 	}
 	
 	public String getRecommendedCalories(String goal) {
@@ -60,19 +61,18 @@ public class UserService {
 		user.setWeight(150);
 		user.setGender(Gender.MALE);
 		user.setActivity(Activity.HEAVY);
+		user.setGoal(Goal.valueOf(goal));
 		
 		kieSession.insert(user);
 		kieSession.getAgenda().getAgendaGroup("activity").setFocus();
 		kieSession.fireAllRules();	
+		kieSession.dispose();
 
-		if (user.getDailyCalorieIntake() != 0) {
-			user.setGoal(Goal.valueOf(goal));
-			kieSession.insert(user);
-			kieSession.getAgenda().getAgendaGroup("activity").setFocus();
-			kieSession.fireAllRules();	
-			kieSession.dispose();
-		}
 		
-		return String.format("Recommended intake of calories for your goal is: %s", user.getDailyCalorieIntake());
+		return String.format("Recommended daily intake of calories for your goal is: %s", user.getRecommendedDailyCalories());
+	}
+	
+	public String getDailyCaloriesStatus() {
+		return "";
 	}
 }

@@ -30,4 +30,9 @@ public class UserController {
 	public String getRecommendedCalories(@RequestParam ("goal") String goal) {
 		return userService.getRecommendedCalories(goal);
 	}
+	
+	@GetMapping("/dailyCaloriesStatus")
+	public String getDailyCaloriesStatus() {
+		return "";
+	}
 }

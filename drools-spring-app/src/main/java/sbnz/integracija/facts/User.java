@@ -26,7 +26,8 @@ public class User extends Person {
 	private double accountBalance;
 	private double purchasePoints;
 	private UserStatus userStatus;
-	private double dailyCalorieIntake;
+	private double recommendedDailyCalories;
+	private double caloriesConsumed;
 	private Activity activity;
 	
 	@Transient
@@ -53,7 +54,7 @@ public class User extends Person {
 		this.accountBalance = accountBalance;
 		this.purchasePoints = purchasePoints;
 		this.userStatus = accountStatus;
-		this.dailyCalorieIntake = dailyCalorieIntake;
+		this.recommendedDailyCalories = recommendedDailyCalories;
 		this.mealHistory = mealHistory;
 		this.workoutHistory = workoutHistory;
 	}
@@ -125,12 +126,20 @@ public class User extends Person {
 	}
 
 
-	public double getDailyCalorieIntake() {
-		return dailyCalorieIntake;
+	public double getRecommendedDailyCalories() {
+		return recommendedDailyCalories;
 	}
 
-	public void setDailyCalorieIntake(double dailyCalorieIntake) {
-		this.dailyCalorieIntake = dailyCalorieIntake;
+	public void setRecommendedDailyCalories(double recommendedDailyCalories) {
+		this.recommendedDailyCalories = recommendedDailyCalories;
+	}
+
+	public double getCaloriesConsumed() {
+		return caloriesConsumed;
+	}
+
+	public void setCaloriesConsumed(double caloriesConsumed) {
+		this.caloriesConsumed = caloriesConsumed;
 	}
 
 	public List<MealHistory> getMealHistory() {

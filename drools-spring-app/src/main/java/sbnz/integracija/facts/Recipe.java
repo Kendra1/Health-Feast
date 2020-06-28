@@ -32,6 +32,7 @@ public class Recipe extends Meal {
 	private Category mealType;
 	private Kitchen kitchenType;
 	private Diet dietType;
+	private double calories;
 	
 	
 	@OneToOne
@@ -132,4 +133,14 @@ public class Recipe extends Meal {
 	public void setSpecificIngredient(Ingredient specificIngredient) {
 		this.specificIngredient = specificIngredient;
 	}
+
+	public double getCalories() {
+		return calories;
+	}
+
+	public void setCalories(double calories) {
+		this.calories = calories;
+	}
+	
+	
 }

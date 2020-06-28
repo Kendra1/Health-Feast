@@ -4,7 +4,6 @@ import sbnz.integracija.facts.User;
 import sbnz.integracija.enumeration.Gender;
 import sbnz.integracija.enumeration.Goal;
 
-
 rule "Set activity - very light"
 	agenda-group "activity"
     when
@@ -56,7 +55,8 @@ rule "Calculate daily calorie intake for men"
     when
     	$user: User(gender == Gender.MALE, activityCount != null, $calories: (weight * 1.0 * 24.0 * activityCount))
     then
-        $user.setDailyCalorieIntake($calories);
+    	System.out.println($calories);
+        $user.setRecommendedDailyCalories($calories);
         update($user);
 end
 
@@ -66,43 +66,61 @@ rule "Calculate daily calorie intake for women"
     when
     	$user: User(gender == Gender.FEMALE, activityCount != null, $calories: (weight * 0.9 * 24.0 * activityCount))
     then
-        $user.setDailyCalorieIntake($calories);
+        $user.setRecommendedDailyCalories($calories);
         update($user);
 end
 
 rule "Goal gain weight"
 	agenda-group "activity"
+	salience -200
+	lock-on-active true
     when
-    	$user: User(goal == Goal.GAIN_WEIGHT, $recommended: (dailyCalorieIntake * 1.5))
+    	$user: User(recommendedDailyCalories != null, goal == Goal.GAIN_WEIGHT, $recommended: (recommendedDailyCalories * 1.5))
     then
-        $user.setDailyCalorieIntake($recommended);
+        $user.setRecommendedDailyCalories($recommended);
         update($user);
 end
 
 rule "Goal lose weight"
 	agenda-group "activity"
+	salience -200
+	lock-on-active true
     when
-    	$user: User(goal == Goal.LOSE_WEIGHT, $recommended: (dailyCalorieIntake * 0.5))
+    	$user: User(recommendedDailyCalories != null, goal == Goal.LOSE_WEIGHT, $recommended: (recommendedDailyCalories * 0.5))
     then
-        $user.setDailyCalorieIntake($recommended);
-        System.out.println($recommended);
+        $user.setRecommendedDailyCalories($recommended);
         update($user);
 end
 
-rule "Goal gain musle"
+rule "Goal gain muscle"
 	agenda-group "activity"
+	salience -200
+	lock-on-active true
     when
-    	$user: User(goal == Goal.GAIN_MUSCLE, $recommended: (dailyCalorieIntake * 1.3))
+    	$user: User(recommendedDailyCalories != null, goal == Goal.GAIN_MUSCLE, $recommended: (recommendedDailyCalories * 1.3))
     then
-        $user.setDailyCalorieIntake($recommended);
+        $user.setRecommendedDailyCalories($recommended);
         update($user);
 end
 
 rule "Goal lose muscle"
 	agenda-group "activity"
+	salience -200
+	lock-on-active true
     when
-    	$user: User(goal == Goal.LOSE_MUSCLE, $recommended: (dailyCalorieIntake * 0.7))
+    	$user: User(recommendedDailyCalories != null, goal == Goal.LOSE_MUSCLE, $recommended: (recommendedDailyCalories * 0.7))
     then
-        $user.setDailyCalorieIntake($recommended);
+        $user.setRecommendedDailyCalories($recommended);
         update($user);
 end
+
+rule "Goal stagnate"
+	agenda-group "activity"
+	salience -200
+	lock-on-active true
+	when
+		$user: User(recommendedDailyCalories != null, goal == Goal.STAGNATE, $recommended: (recommendedDailyCalories));
+	then
+		$user.setRecommendedDailyCalories($recommended);
+		update($user);
+end	
