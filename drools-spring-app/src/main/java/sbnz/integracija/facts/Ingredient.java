@@ -19,8 +19,6 @@ public class Ingredient extends Meal {
 	
 	private double price;
 	
-	private double calories;
-	
 	@ManyToOne
 	@JoinColumn(name = "sale_id")
 	private Sale sale;
@@ -42,13 +40,12 @@ public class Ingredient extends Meal {
 	
 	public Ingredient() {}
 
-	public Ingredient(Long id, String name, double price, double calories, Nutrition nutritionTable,
+	public Ingredient(Long id, String name, double price, Nutrition nutritionTable,
 			Vitamin vitaminTable, Mineral mineralTable, String warning, Sale sale) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.price = price;
-		this.calories = calories;
 		this.nutritionTable = nutritionTable;
 		this.vitaminTable = vitaminTable;
 		this.mineralTable = mineralTable;
@@ -78,14 +75,6 @@ public class Ingredient extends Meal {
 
 	public void setPrice(double price) {
 		this.price = price;
-	}
-
-	public double getCalories() {
-		return calories;
-	}
-
-	public void setCalories(double calories) {
-		this.calories = calories;
 	}
 
 	public Nutrition getNutritionTable() {

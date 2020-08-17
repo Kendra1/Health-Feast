@@ -2,7 +2,12 @@ package sbnz.integracija.facts;
 
 import java.util.List;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,16 +36,20 @@ public class Recipe extends Meal {
 	private int noOfPeople;
 	private Category mealType;
 	private Kitchen kitchenType;
-	private Diet dietType;
-	private double calories;
 	
+	
+	@ElementCollection(targetClass = Diet.class)
+	@Enumerated(EnumType.STRING)
+	@Column(name = "dietTypes")
+	@CollectionTable
+	private List<Diet> dietTypes;
 	
 	@OneToOne
 	@JoinColumn(name = "specificIngredient_id")
 	private Ingredient specificIngredient;
 
 	public Recipe(String name, List<IngredientQuantity> ingredients, int preparationTime, String instructions,
-			int noOfPeople, Category mealType, Kitchen kitchenType, Diet dietType,
+			int noOfPeople, Category mealType, Kitchen kitchenType, List<Diet> dietTypes,
 			Ingredient specificIngredient) {
 		super();
 		this.name = name;
@@ -50,8 +59,12 @@ public class Recipe extends Meal {
 		this.noOfPeople = noOfPeople;
 		this.mealType = mealType;
 		this.kitchenType = kitchenType;
-		this.dietType = dietType;
 		this.specificIngredient = specificIngredient;
+		this.dietTypes = dietTypes;
+	}
+
+	public Recipe() {
+		// TODO Auto-generated constructor stub
 	}
 
 	public Long getId() {
@@ -118,14 +131,6 @@ public class Recipe extends Meal {
 		this.kitchenType = kitchenType;
 	}
 
-	public Diet getDietType() {
-		return dietType;
-	}
-
-	public void setDietType(Diet dietType) {
-		this.dietType = dietType;
-	}
-
 	public Ingredient getSpecificIngredient() {
 		return specificIngredient;
 	}
@@ -134,13 +139,12 @@ public class Recipe extends Meal {
 		this.specificIngredient = specificIngredient;
 	}
 
-	public double getCalories() {
-		return calories;
+	public List<Diet> getDietTypes() {
+		return dietTypes;
 	}
 
-	public void setCalories(double calories) {
-		this.calories = calories;
+	public void setDietTypes(List<Diet> dietTypes) {
+		this.dietTypes = dietTypes;
 	}
-	
 	
 }

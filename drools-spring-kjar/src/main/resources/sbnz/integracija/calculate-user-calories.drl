@@ -4,7 +4,7 @@ import sbnz.integracija.facts.User;
 import sbnz.integracija.enumeration.Gender;
 import sbnz.integracija.enumeration.Goal;
 
-rule "Set activity - very light"
+/*rule "Set activity - very light"
 	agenda-group "activity"
     when
         $user: User(activity == Activity.VERY_LIGHT)
@@ -48,6 +48,7 @@ rule "Set activity - very heavy"
         $user.setActivityCount(2.0);
         update($user);
 end
+
 
 rule "Calculate daily calorie intake for men"
 	agenda-group "activity"	
@@ -124,3 +125,5 @@ rule "Goal stagnate"
 		$user.setRecommendedDailyCalories($recommended);
 		update($user);
 end	
+
+*/

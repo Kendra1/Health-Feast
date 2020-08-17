@@ -1,5 +1,9 @@
 package sbnz.integracija.service;
 
+import java.util.List;
+import java.io.Console;
+import java.util.ArrayList;
+
 import org.kie.api.event.rule.AgendaEventListener;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
@@ -10,6 +14,10 @@ import sbnz.integracija.enumeration.Activity;
 import sbnz.integracija.enumeration.Gender;
 import sbnz.integracija.enumeration.Goal;
 import sbnz.integracija.enumeration.UserStatus;
+import sbnz.integracija.facts.DailyMeal;
+import sbnz.integracija.facts.Ingredient;
+import sbnz.integracija.facts.MealHistory;
+import sbnz.integracija.facts.Recipe;
 import sbnz.integracija.facts.User;
 
 
@@ -73,6 +81,48 @@ public class UserService {
 	}
 	
 	public String getDailyCaloriesStatus() {
+		KieSession kieSession = kieContainer.newKieSession();
+		
+		User user = new User();
+		user.setRecommendedDailyCalories(1200);
+		
+		Ingredient ing1 = new Ingredient();
+		ing1.setCalories(100);
+		
+		Ingredient ing2 = new Ingredient();
+		ing2.setCalories(200);
+		
+		Recipe recipe = new Recipe();
+		recipe.setCalories(300);
+		
+		DailyMeal meal1 = new DailyMeal();
+		meal1.setMeal(ing1);
+		meal1.setQuantity(2);
+		
+		DailyMeal meal2 = new DailyMeal();
+		meal2.setMeal(ing2);
+		meal2.setQuantity(3);
+		
+		DailyMeal meal3 = new DailyMeal();
+		meal3.setMeal(recipe);
+		meal3.setQuantity(1);
+		
+		List<DailyMeal> meals = new ArrayList<DailyMeal>();
+		meals.add(meal1);
+		meals.add(meal2);
+		meals.add(meal3);
+		
+		MealHistory mealHistoryObj = new MealHistory();
+		mealHistoryObj.setMeals(meals);
+	
+	
+		System.out.println("pre ubacivanje");
+		kieSession.insert(user);
+		kieSession.insert(mealHistoryObj);
+		System.out.println("posle ubacivanje");
+		kieSession.getAgenda().getAgendaGroup("dailyCalories").setFocus();
+		kieSession.fireAllRules();			
+		System.out.println("posle svega");
 		return "";
 	}
 }

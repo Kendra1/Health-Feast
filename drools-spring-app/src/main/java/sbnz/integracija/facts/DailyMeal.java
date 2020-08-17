@@ -8,7 +8,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 @Entity
-public class HistoryMeal {
+public class DailyMeal {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +19,7 @@ public class HistoryMeal {
 	
 	private double quantity;
 
-	public HistoryMeal() {
+	public DailyMeal() {
 		super();
 	}
 

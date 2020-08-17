@@ -1,20 +1,21 @@
 package sbnz.integracija;
-
 import sbnz.integracija.facts.User;
+import sbnz.integracija.facts.MealHistory;
+import sbnz.integracija.facts.DailyMeal;
+import sbnz.integracija.facts.Meal;
+import java.util.List;
+global List<HistoryMeal> meals;
 
-/*rule "Check daily calories status"
-	agenda-group "calories"
-	no-loop
-	lock-on-active true
-    when    
-    	 $u : User(recommendedDailyCalories != null);
-    	 $mealHistory: MealHistory($meals: meals);
-    	 $meal:  Meal( $meal memberOf $meals )
-         accumulate ( 
-         		$calories : Meal( $calories memberOf $meals );
-        		$count : count($calories)
-        		)
-    then
-    	modify($d){ setNumIngredients($count); }
-end/*
-
+rule "New"
+	agenda-group "dailyCalories"
+	when 
+		$mealHistory: MealHistory($meals: meals)
+		accumulate(
+		 	DailyMeal($quantity: quantity, $meal: meal) from $meals
+		 	and Meal($calories: calories) from $meal,
+		 	$total: sum($calories*$quantity)
+		 )
+	then
+		System.out.println($total);
+		
+end

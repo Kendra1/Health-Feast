@@ -21,7 +21,7 @@ public class MealHistory {
 	private Date date;
 	
 	@OneToMany
-	private List<HistoryMeal> meals;
+	private List<DailyMeal> meals;
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
@@ -50,11 +50,11 @@ public class MealHistory {
 		this.date = date;
 	}
 
-	public List<HistoryMeal> getMeals() {
+	public List<DailyMeal> getMeals() {
 		return meals;
 	}
 
-	public void setMeals(List<HistoryMeal> meals) {
+	public void setMeals(List<DailyMeal> meals) {
 		this.meals = meals;
 	}
 

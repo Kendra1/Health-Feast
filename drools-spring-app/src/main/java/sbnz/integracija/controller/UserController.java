@@ -1,11 +1,18 @@
-package sbnz.integracija.controller;
+	package sbnz.integracija.controller;
+
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import dtos.IngredientDto;
 import sbnz.integracija.enumeration.UserStatus;
+import sbnz.integracija.facts.Ingredient;
+import sbnz.integracija.service.RecipeService;
 import sbnz.integracija.service.UserService;
 
 @RestController
@@ -13,6 +20,9 @@ public class UserController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private RecipeService recipeService;
 
 	
 	@GetMapping("/userStatus")
@@ -33,6 +43,11 @@ public class UserController {
 	
 	@GetMapping("/dailyCaloriesStatus")
 	public String getDailyCaloriesStatus() {
-		return "";
+		return userService.getDailyCaloriesStatus();
+	}
+	
+	@PostMapping("/recipes")
+	public String getRecipes(@RequestBody List<IngredientDto> ingredients) {
+		return recipeService.recipes(ingredients);
 	}
 }

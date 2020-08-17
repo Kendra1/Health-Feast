@@ -1,0 +1,20 @@
+package sbnz.integracija
+
+import java.util.List;
+import dtos.IngredientDto;
+
+rule "Pizza"
+	agenda-group "recipes"
+	when
+		$ingredients: List() from collect(IngredientDto())
+	
+	    $ing: Number() from accumulate (
+	    	IngredientDto(name == "podloga" || name == "sir" || name == "sunka" || name == "sampinjoni" || name == "kecap")
+	    from $ingredients,
+	    init(int count = 0;),
+        action(count += 1;),
+        result(count))
+	    
+	then
+    	System.out.println($ingredients.size());
+end
