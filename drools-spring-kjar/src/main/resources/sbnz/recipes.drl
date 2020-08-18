@@ -1,0 +1,98 @@
+package sbnz
+
+import java.util.List;
+import java.util.ArrayList;
+import sbnz.web.dto.IngredientDto;
+import sbnz.model.drools.PrioritizedRecipe;
+import sbnz.model.drools.Recipes;
+import sbnz.service.RecipeService;
+import sbnz.model.Recipe;
+
+declare Recipes
+    recipes: List
+end
+
+rule "Create new list of recipes"	
+	agenda-group "recipes"
+	when
+	    not Recipes()
+	then
+	    Recipes recipes = new Recipes();
+	    recipes.setRecipes( new ArrayList<>() );
+	    insert( recipes );
+end
+
+rule "Sort recipes by priority"
+	agenda-group "recipes"
+	salience -100
+	when
+	    $recipe: PrioritizedRecipe( $name: name, $priority: priority )
+	    $recipes: Recipes( $recipes: recipes not contains $recipe )
+	    not PrioritizedRecipe( this != $recipe, this not memberOf $recipes, priority < $priority )
+	then
+	    modify( $recipes ){ getRecipes().add( $recipe ) }
+end
+
+rule "List all recipes"
+	salience -100
+	when
+		$recipes: Recipes(recipes.size() != 0)
+	then
+		for (PrioritizedRecipe recipe : $recipes.getRecipes()){
+		    	System.out.println( "Recept " + recipe.getName() + " prioritet " + recipe.getPriority());
+		}
+end
+
+rule "Pizza"
+	agenda-group "recipes"
+	when
+		$recipeService: RecipeService()
+		$ingredients: List() from collect(IngredientDto())
+	    $ing: Number(intValue > 0) from accumulate (
+	    	IngredientDto(name == "base" || name == "cheese" || name == "egg" || name == "mushrooms" || name == "ketchup")
+	    from $ingredients,
+	    init(int count = 0;),
+        action(count += 1;),
+        result(count))
+	    
+	then
+		Recipe foundRecipe = $recipeService.getRecipeByName("pizza");
+		PrioritizedRecipe recipe = new PrioritizedRecipe(foundRecipe.getName(), $ing, foundRecipe.getIngredients().size());
+		insert(recipe);
+end
+
+rule "Muffin"
+	agenda-group "recipes"
+	when
+		$recipeService: RecipeService()
+		$ingredients: List() from collect(IngredientDto())
+	    $ing: Number(intValue > 0) from accumulate (
+	    	IngredientDto(name == "flour" || name == "sugar" || name == "cocoa" || name == "chocolate" || name == "milk" || name == "egg" || name == "oil")
+	    from $ingredients,
+	    init(int count = 0;),
+        action(count += 1;),
+        result(count))
+	    
+	then
+		Recipe foundRecipe = $recipeService.getRecipeByName1("muffin");
+		PrioritizedRecipe recipe = new PrioritizedRecipe(foundRecipe.getName(), $ing, foundRecipe.getIngredients().size());
+		insert(recipe);
+end
+
+rule "Cookies"
+	agenda-group "recipes"
+	when
+		$recipeService: RecipeService()
+		$ingredients: List() from collect(IngredientDto())
+	    $ing: Number(intValue > 0) from accumulate (
+	    	IngredientDto(name == "flour" || name == "sugar" || name == "brown sugar" || name == "chocolate" || name == "butter" || name == "egg")
+	    from $ingredients,
+	    init(int count = 0;),
+        action(count += 1;),
+        result(count))
+	    
+	then
+		Recipe foundRecipe = $recipeService.getRecipeByName2("cookies");
+		PrioritizedRecipe recipe = new PrioritizedRecipe(foundRecipe.getName(), $ing, foundRecipe.getIngredients().size());
+		insert(recipe);
+end

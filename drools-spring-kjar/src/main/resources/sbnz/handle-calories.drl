@@ -1,0 +1,23 @@
+package sbnz;
+
+import sbnz.model.User;
+import sbnz.model.MealHistory;
+import sbnz.model.DailyMeal;
+import sbnz.model.Meal;
+import java.util.List;
+
+global List<HistoryMeal> meals;
+
+rule "New"
+	agenda-group "dailyCalories"
+	when 
+		$mealHistory: MealHistory($meals: meals)
+		accumulate(
+		 	DailyMeal($quantity: quantity, $meal: meal) from $meals
+		 	and Meal($calories: calories) from $meal,
+		 	$total: sum($calories*$quantity)
+		 )
+	then
+		System.out.println($total);
+		
+end
