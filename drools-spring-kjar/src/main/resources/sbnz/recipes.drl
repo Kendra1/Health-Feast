@@ -1,0 +1,148 @@
+package sbnz
+
+import java.util.List;
+import java.util.ArrayList;
+import sbnz.web.dto.RecipeFilterDto;
+import sbnz.model.drools.PrioritizedRecipe;
+import sbnz.model.drools.Recipes;
+import sbnz.service.RecipeService;
+import sbnz.model.Recipe;
+
+global Recipes globalRecipes;
+
+rule "Create new list of recipes"	
+	agenda-group "recipes"
+	when
+	    not Recipes()
+	then
+	    Recipes recipes = globalRecipes;
+	    insert( recipes );
+end
+
+rule "Sort recipes by priority"
+	agenda-group "recipes"
+	salience -150
+	when
+	    $recipe: PrioritizedRecipe( $name: name, $priority: priority )
+	    $recipes: Recipes( recipes not contains $recipe )
+	    not PrioritizedRecipe( this != $recipe, this not memberOf $recipes, priority < $priority )
+	then
+	    globalRecipes.getRecipes().add($recipe);
+end
+
+rule "Pizza"
+	agenda-group "recipes"
+	when
+		$recipeService: RecipeService()
+		$recipeFilter: RecipeFilterDto($ingredients : ingredients)
+	    $ing: Number(intValue > 0) from accumulate (
+	    	String(this == "base" || this == "cheese" || this == "ham" || this == "mushrooms" || this == "ketchup")
+	    from $ingredients,
+	    init(int count = 0;),
+        action(count += 1;),
+        result(count))
+	    
+	then
+		Recipe foundRecipe = $recipeService.findRecipeByName("pizza");
+		PrioritizedRecipe recipe = new PrioritizedRecipe(foundRecipe.getName(), $ing, foundRecipe.getIngredients().size());
+		insert(recipe);
+		insert(foundRecipe);
+end
+
+rule "Filter by kitchen type"
+	agenda-group "recipes"
+	when
+		$recipeFilter: RecipeFilterDto($kitchenType: kitchenType)
+		$prioritizedRecipe: PrioritizedRecipe($name: name)
+		$recipe: Recipe (kitchenType.toString() != $kitchenType, name == $name)
+	then 
+		delete($prioritizedRecipe);
+end
+
+rule "Filter by meal type"
+	agenda-group "recipes"
+	when
+		$recipeFilter: RecipeFilterDto($mealType: mealType)
+		$prioritizedRecipe: PrioritizedRecipe($name: name)
+		$recipe: Recipe (mealType.toString() != $mealType, name == $name)
+	then 
+		delete($prioritizedRecipe);
+end
+
+rule "Filter by calories"
+	agenda-group "recipes"
+	when
+		$recipeFilter: RecipeFilterDto($fromKcal: fromKcal, $toKcal: toKcal)
+		$prioritizedRecipe: PrioritizedRecipe($name: name)
+		$recipe: Recipe (calories < $fromKcal || calories > $toKcal , name == $name)
+	then 
+		delete($prioritizedRecipe);
+end
+
+rule "Filter by preparation time"
+	agenda-group "recipes"
+	when
+		$recipeFilter: RecipeFilterDto($fromMins: fromMins, $toMins: toMins)
+		$prioritizedRecipe: PrioritizedRecipe($name: name)
+		$recipe: Recipe (preparationTime < $fromMins || preparationTime > $toMins , name == $name)
+	then 
+		delete($prioritizedRecipe);
+end
+
+rule "Filter by number of people"
+	agenda-group "recipes"
+	when
+		$recipeFilter: RecipeFilterDto($fromPpl: fromPpl, $toPpl: toPpl)
+		$prioritizedRecipe: PrioritizedRecipe($name: name)
+		$recipe: Recipe (noOfPeople < $fromPpl || noOfPeople > $toPpl , name == $name)
+	then 
+		delete($prioritizedRecipe);
+end
+/*
+rule "Find recipes by name"
+
+	agenda-group "recipes"
+	when
+		$recipe: RecipeDto($recipeName: name)
+	then
+		
+
+end*/
+
+
+/*
+rule "Muffin"
+	agenda-group "recipes"
+	when
+		$recipeService: RecipeService()
+		$ingredients: List() from collect(IngredientDto())
+	    $ing: Number(intValue > 0) from accumulate (
+	    	IngredientDto(name == "flour" || name == "sugar" || name == "cocoa" || name == "chocolate" || name == "milk" || name == "egg" || name == "oil")
+	    from $ingredients,
+	    init(int count = 0;),
+        action(count += 1;),
+        result(count))
+	    
+	then
+		Recipe foundRecipe = $recipeService.findRecipeByName("muffin");
+		PrioritizedRecipe recipe = new PrioritizedRecipe(foundRecipe.getName(), $ing, foundRecipe.getIngredients().size());
+		insert(recipe);
+end
+
+rule "Cookies"
+	agenda-group "recipes"
+	when
+		$recipeService: RecipeService()
+		$ingredients: List() from collect(IngredientDto())
+	    $ing: Number(intValue > 0) from accumulate (
+	    	IngredientDto(name == "flour" || name == "sugar" || name == "brown sugar" || name == "chocolate" || name == "butter" || name == "egg")
+	    from $ingredients,
+	    init(int count = 0;),
+        action(count += 1;),
+        result(count))
+	    
+	then
+		Recipe foundRecipe = $recipeService.findRecipeByName("cookies");
+		PrioritizedRecipe recipe = new PrioritizedRecipe(foundRecipe.getName(), $ing, foundRecipe.getIngredients().size());
+		insert(recipe);
+end*/
