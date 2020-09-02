@@ -25,7 +25,7 @@ public class RegistrationDto {
     @Email
     private String email;
 
-    private Role role = Role.USER;
+    private Role role = Role.ROLE_USER;
 
     @AssertTrue
     public boolean isConfirmedPasswordValid() {
