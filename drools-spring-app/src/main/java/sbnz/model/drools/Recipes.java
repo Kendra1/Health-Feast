@@ -16,7 +16,4 @@ public class Recipes {
 	public void setRecipes(List<PrioritizedRecipe> recipes) {
 		this.recipes = recipes;
 	}
-	
-	
-
 }

@@ -3,7 +3,10 @@ package sbnz.model;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Transient;
@@ -15,20 +18,29 @@ import sbnz.enumeration.Role;
 import sbnz.enumeration.UserStatus;
 
 @Entity
-@PrimaryKeyJoinColumn(name = "id")
 public class User extends Person {
 	
-	private int height;
-	private double weight;
-	private int age;
-	private Gender gender;
-	private Goal goal;
-	private double accountBalance;
-	private double purchasePoints;
-	private UserStatus userStatus;
-	private double recommendedDailyCalories;
-	private double caloriesConsumed;
+	private Integer height;
+	private Double weight;
+	private Integer age;
+	private Double accountBalance;
+	private Double purchasePoints;
+	private Double recommendedDailyCalories;
+	private Double caloriesConsumed;
+	
+	@Enumerated(EnumType.STRING)
 	private Activity activity;
+	
+	@Enumerated(EnumType.STRING)
+	private Gender gender;
+	
+	@Enumerated(EnumType.STRING)
+	private Goal goal;
+	
+	@Enumerated(EnumType.STRING)
+	private UserStatus userStatus;
+	
+	private boolean enabled;
 	
 	@Transient
 	private double activityCount;
@@ -42,9 +54,9 @@ public class User extends Person {
 	public User() {}
 	
 	public User(String name, String lastName, String email, String username, String password, Date birthDate, Role role,
-			int height, int weight, int age, Gender gender, Goal goal, double accountBalance, double purchasePoints,
-			UserStatus accountStatus, double dailyCalorieIntake, List<MealHistory> mealHistory,
-			List<WorkoutHistory> workoutHistory, double recommendedDailyCalories) {
+			Integer height, Double weight, Integer age, Gender gender, Goal goal, Double accountBalance, Double purchasePoints,
+			UserStatus accountStatus, Double dailyCalorieIntake, List<MealHistory> mealHistory,
+			List<WorkoutHistory> workoutHistory, Double recommendedDailyCalories) {
 		super(name, lastName, email, username, password, birthDate, role);
 		this.height = height;
 		this.weight = weight;
@@ -60,27 +72,27 @@ public class User extends Person {
 	}
 
 
-	public int getHeight() {
+	public Integer getHeight() {
 		return height;
 	}
 
-	public void setHeight(int height) {
+	public void setHeight(Integer height) {
 		this.height = height;
 	}
 
-	public double getWeight() {
+	public Double getWeight() {
 		return weight;
 	}
 
-	public void setWeight(double weight) {
+	public void setWeight(Double weight) {
 		this.weight = weight;
 	}
 
-	public int getAge() {
+	public Integer getAge() {
 		return age;
 	}
 
-	public void setAge(int age) {
+	public void setAge(Integer age) {
 		this.age = age;
 	}
 
@@ -100,19 +112,19 @@ public class User extends Person {
 		this.goal = goal;
 	}
 
-	public double getAccountBalance() {
+	public Double getAccountBalance() {
 		return accountBalance;
 	}
 
-	public void setAccountBalance(double accountBalance) {
+	public void setAccountBalance(Double accountBalance) {
 		this.accountBalance = accountBalance;
 	}
 
-	public double getPurchasePoints() {
+	public Double getPurchasePoints() {
 		return purchasePoints;
 	}
 
-	public void setPurchasePoints(double purchasePoints) {
+	public void setPurchasePoints(Double purchasePoints) {
 		this.purchasePoints = purchasePoints;
 	}
 
@@ -124,19 +136,19 @@ public class User extends Person {
 		this.userStatus = userStatus;
 	}
 
-	public double getRecommendedDailyCalories() {
+	public Double getRecommendedDailyCalories() {
 		return recommendedDailyCalories;
 	}
 
-	public void setRecommendedDailyCalories(double recommendedDailyCalories) {
+	public void setRecommendedDailyCalories(Double recommendedDailyCalories) {
 		this.recommendedDailyCalories = recommendedDailyCalories;
 	}
 
-	public double getCaloriesConsumed() {
+	public Double getCaloriesConsumed() {
 		return caloriesConsumed;
 	}
 
-	public void setCaloriesConsumed(double caloriesConsumed) {
+	public void setCaloriesConsumed(Double caloriesConsumed) {
 		this.caloriesConsumed = caloriesConsumed;
 	}
 
@@ -164,11 +176,19 @@ public class User extends Person {
 		this.activity = activity;
 	}
 
-	public double getActivityCount() {
+	public Double getActivityCount() {
 		return activityCount;
 	}
 
-	public void setActivityCount(double activityCount) {
+	public void setActivityCount(Double activityCount) {
 		this.activityCount = activityCount;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 }

@@ -2,22 +2,39 @@ package sbnz;
 
 import sbnz.model.User;
 import sbnz.model.MealHistory;
-import sbnz.model.DailyMeal;
-import sbnz.model.Meal;
-import java.util.List;
+import sbnz.model.Ingredient;
+import sbnz.model.IngredientQuantity;
 
-global List<HistoryMeal> meals;
-
-rule "New"
+rule "Calculate entered daily calories"
 	agenda-group "dailyCalories"
+	no-loop true
 	when 
+		$user: User()
 		$mealHistory: MealHistory($meals: meals)
 		accumulate(
-		 	DailyMeal($quantity: quantity, $meal: meal) from $meals
-		 	and Meal($calories: calories) from $meal,
-		 	$total: sum($calories*$quantity)
+		 	IngredientQuantity($quantity: quantity, $ingredient: ingredient) from $meals
+		 	and Ingredient($calories: calories) from $ingredient,
+		 	$total: sum($calories * $quantity)
 		 )
 	then
-		System.out.println($total);
-		
+		$user.setCaloriesConsumed($total);
+		update($user);
+end
+
+
+rule "Warning: daily intake of calories is passed"
+	agenda-group "dailyCalories"
+	when 
+		$user: User( caloriesConsumed != null, recommendedDailyCalories!= null, caloriesConsumed > recommendedDailyCalories, $excess: (caloriesConsumed - recommendedDailyCalories))
+	then
+		System.out.println("You passed your daily intake of calories for " + $excess);
+end
+
+
+rule "Left number of calories to take today"
+	agenda-group "dailyCalories"
+	when 
+		$user: User( caloriesConsumed != null, recommendedDailyCalories!= null, caloriesConsumed < recommendedDailyCalories, $leftCalories: (recommendedDailyCalories - caloriesConsumed))
+	then
+		System.out.println("It is left " + $leftCalories + " calories to take today");
 end

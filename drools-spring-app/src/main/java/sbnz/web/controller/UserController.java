@@ -1,52 +1,68 @@
-	package sbnz.web.controller;
-
-import java.util.List;
+package sbnz.web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import sbnz.enumeration.UserStatus;
-import sbnz.service.RecipeService;
+import sbnz.security.annotations.LoggedUser;
 import sbnz.service.UserService;
-import sbnz.web.dto.IngredientDto;
+import sbnz.web.dto.UpdateUserDto;
+import sbnz.web.dto.UserDto;
+import org.springframework.http.HttpStatus;
+
 
 @RestController
+@RequestMapping("/api/user")
 public class UserController {
 	
 	@Autowired
 	private UserService userService;
 	
-	@Autowired
-	private RecipeService recipeService;
-
-	
 	@GetMapping("/userStatus")
-	public UserStatus getUserStatus(@RequestParam ("purchasePoints") int purchasePoints) {
-		return userService.getUserStatus(purchasePoints);
+    @LoggedUser
+	public UserStatus getUserStatus(Authentication authentication) {
+		return userService.getUserStatus(authentication);
 	}
 	
 	@GetMapping("/calories")
-	public String getRecommendedIntake(@RequestParam ("weight") int weight, 
-			@RequestParam ("gender") String gender, @RequestParam ("activity") String activity) {
-		return userService.getRecommendedIntake(weight, gender, activity);
+    @LoggedUser
+	public String getRecommendedIntake (Authentication authentication) {
+		return userService.getRecommendedIntake(authentication);
 	}
 	
 	@GetMapping("/recommendedCalories")
-	public String getRecommendedCalories(@RequestParam ("goal") String goal) {
-		return userService.getRecommendedCalories(goal);
+    @LoggedUser
+	public String getRecommendedCalories(@RequestParam ("goal") String goal, Authentication authentication) {
+		return userService.getRecommendedCalories(goal, authentication);
 	}
 	
 	@GetMapping("/dailyCaloriesStatus")
-	public String getDailyCaloriesStatus() {
-		return userService.getDailyCaloriesStatus();
+    @LoggedUser
+	public String getDailyCaloriesStatus(Authentication authentication) {
+		return userService.getDailyCaloriesStatus(authentication);
 	}
-	
-	@PostMapping("/recipes")
-	public String getRecipes(@RequestBody List<IngredientDto> ingredients) {
-		return recipeService.recipes(ingredients);
-	}
+
+    @PatchMapping
+    @ResponseStatus(HttpStatus.OK)
+    @LoggedUser
+    public UpdateUserDto updateUser(@RequestPart(value = "user") UpdateUserDto updatedUser,
+                                 	@RequestPart(value = "file", required = false) MultipartFile image,
+                                 	Authentication authentication) {
+        return userService.updateUser(updatedUser, image, authentication);
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    @LoggedUser
+    public UserDto getLoggedUser(Authentication authentication) {
+        return userService.getLoggedUser(authentication);
+    }
 }

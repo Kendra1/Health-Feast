@@ -1,9 +1,16 @@
 package sbnz.service;
 
-import sbnz.model.Person;
+import org.springframework.web.multipart.MultipartFile;
+
+import sbnz.web.dto.LoginRequestDto;
+import sbnz.web.dto.LoginResponseDto;
+import sbnz.web.dto.RegistrationDto;
 
 public interface AuthUserService {
-
-	Person findByEmail(String email);
 	
+	LoginResponseDto login (LoginRequestDto loginRequest);
+
+	RegistrationDto registerUser(RegistrationDto registrationDto, MultipartFile image);
+
+	void confirmUserAccount(String confirmationToken);
 }

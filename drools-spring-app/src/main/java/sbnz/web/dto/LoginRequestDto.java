@@ -1,16 +1,15 @@
 package sbnz.web.dto;
 
-import java.io.Serializable;
+public class LoginRequestDto{
+	
+	private String email;
+    
+	private String password;
 
-public class LoginDTO implements Serializable{
-
-    private String email;
-    private String password;
-
-    public LoginDTO() {
+    public LoginRequestDto() {
     }
 
-    public LoginDTO(String email, String password) {
+    public LoginRequestDto(String email, String password) {
         this.email = email;
         this.password = password;
     }

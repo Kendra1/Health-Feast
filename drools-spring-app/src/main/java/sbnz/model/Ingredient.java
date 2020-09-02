@@ -9,7 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 @Entity
-public class Ingredient extends Meal {
+public class Ingredient {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,6 +18,8 @@ public class Ingredient extends Meal {
 	private String name;
 	
 	private double price;
+	
+	private double calories;
 	
 	@ManyToOne
 	@JoinColumn(name = "sale_id")
@@ -37,6 +39,8 @@ public class Ingredient extends Meal {
 	
 	//e.g. undercooked egg can lead to salmonella
 	private String warning;
+	
+	private String unit;
 	
 	public Ingredient() {}
 
@@ -116,4 +120,21 @@ public class Ingredient extends Meal {
 	public void setSale(Sale sale) {
 		this.sale = sale;
 	}
+
+	public String getUnit() {
+		return unit;
+	}
+
+	public void setUnit(String unit) {
+		this.unit = unit;
+	}
+
+	public double getCalories() {
+		return calories;
+	}
+
+	public void setCalories(double calories) {
+		this.calories = calories;
+	}
+	
 }

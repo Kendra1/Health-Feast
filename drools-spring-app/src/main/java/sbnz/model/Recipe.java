@@ -20,7 +20,7 @@ import sbnz.enumeration.Diet;
 import sbnz.enumeration.Kitchen;
 
 @Entity
-public class Recipe extends Meal {
+public class Recipe {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,9 +34,14 @@ public class Recipe extends Meal {
 	private int preparationTime;
 	private String instructions;
 	private int noOfPeople;
+	
+	@Enumerated(EnumType.STRING)
 	private Category mealType;
+	
+	@Enumerated(EnumType.STRING)
 	private Kitchen kitchenType;
 	
+	private double calories;
 	
 	@ElementCollection(targetClass = Diet.class)
 	@Enumerated(EnumType.STRING)
@@ -146,5 +151,21 @@ public class Recipe extends Meal {
 	public void setDietTypes(List<Diet> dietTypes) {
 		this.dietTypes = dietTypes;
 	}
+
+	public double getCalories() {
+		return calories;
+	}
+
+	public void setCalories(double calories) {
+		this.calories = calories;
+	}
 	
+	public double calculateCalories() {
+		double calories = 0;
+		for (IngredientQuantity ing: ingredients) {
+			calories += ing.getIngredient().getCalories() * ing.getQuantity();
+		}
+		
+		return calories;
+	}	
 }

@@ -12,12 +12,12 @@ public class Meal {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	private double calories;
+
 	public Meal() {
 		
 	}
-	
-	private double calories;
-	
+		
 	public double getCalories() {
 		return calories;
 	}

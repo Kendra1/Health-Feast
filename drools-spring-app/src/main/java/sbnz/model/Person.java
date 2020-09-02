@@ -1,15 +1,19 @@
 package sbnz.model;
 
 import java.util.Date;
+import java.util.UUID;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 
 import sbnz.enumeration.Role;
 
-@Entity
+@MappedSuperclass
 public class Person {
 
 	@Id
@@ -21,6 +25,8 @@ public class Person {
 	private String username;
 	private String password;
 	private Date birthDate;
+	private UUID confirmationToken;
+	@Enumerated(EnumType.STRING)
 	private Role role;
 	
 	public Person() {}
@@ -84,5 +90,13 @@ public class Person {
 	}
 	public void setRole(Role role) {
 		this.role = role;
+	}
+
+	public UUID getConfirmationToken() {
+		return confirmationToken;
+	}
+
+	public void setConfirmationToken(UUID confirmationToken) {
+		this.confirmationToken = confirmationToken;
 	}
 }

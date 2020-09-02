@@ -20,19 +20,17 @@ public class MealHistory {
 	
 	private Date date;
 	
+	//this can be one/more ingredient/recipe
 	@OneToMany
-	private List<DailyMeal> meals;
+	private List<IngredientQuantity> meals;
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
 	
-
 	public MealHistory() {
 		super();
 	}
-	
-	
 
 	public Long getId() {
 		return id;
@@ -50,11 +48,11 @@ public class MealHistory {
 		this.date = date;
 	}
 
-	public List<DailyMeal> getMeals() {
+	public List<IngredientQuantity> getMeals() {
 		return meals;
 	}
 
-	public void setMeals(List<DailyMeal> meals) {
+	public void setMeals(List<IngredientQuantity> meals) {
 		this.meals = meals;
 	}
 

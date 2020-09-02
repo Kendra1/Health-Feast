@@ -11,7 +11,7 @@ public class Nutrition {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private double transFat;
+	private double fat;
 	private double saturatedFat;
 	private double cholesterol;
 	private double sodium;
@@ -19,9 +19,11 @@ public class Nutrition {
 	private double sugars;
 	private double protein;
 	
-	public Nutrition(double transFat, double saturatedFat, double cholesterol, double sodium, double complexCarbs,
+	public Nutrition() {}
+	
+	public Nutrition(double fat, double saturatedFat, double cholesterol, double sodium, double complexCarbs,
 			double sugars, double protein) {
-		this.transFat = transFat;
+		this.fat = fat;
 		this.saturatedFat = saturatedFat;
 		this.cholesterol = cholesterol;
 		this.sodium = sodium;
@@ -31,10 +33,10 @@ public class Nutrition {
 	}
 	
 	public double getTransFat() {
-		return transFat;
+		return fat;
 	}
 	public void setTransFat(double transFat) {
-		this.transFat = transFat;
+		this.fat = transFat;
 	}
 	public double getSaturatedFat() {
 		return saturatedFat;

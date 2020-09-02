@@ -1,5 +1,5 @@
 package sbnz.enumeration;
 
 public enum Role {
-ADMIN, CHEF, TRAINER, USER
+	ROLE_ADMIN, ROLE_CHEF, ROLE_TRAINER, ROLE_USER
 }
