@@ -1,6 +1,5 @@
 package sbnz.service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-
+import ma.glasnost.orika.MapperFacade;
+import ma.glasnost.orika.MapperFactory;
+import ma.glasnost.orika.impl.DefaultMapperFactory;
 import sbnz.enumeration.Goal;
 import sbnz.enumeration.UserStatus;
 import sbnz.model.Ingredient;
@@ -152,18 +152,12 @@ public class UserServiceImpl implements UserService {
 	public UpdateUserDto updateUser(UpdateUserDto updatedUser, MultipartFile image, Authentication authentication) {
 		User user = getUserFromAuthentication(authentication);
 		
-        ObjectReader objectReader = objectMapper.readerForUpdating(user);
-        User updatedExistingUser = null;
+		MapperFactory mapperFactory = new DefaultMapperFactory.Builder().mapNulls(false).build();
+        MapperFacade mapperFacade = mapperFactory.getMapperFacade();
+        mapperFacade.map(updatedUser, user);
         
-		try {
-	        String updatedUserString = objectMapper.writeValueAsString(updatedUser);
-			updatedExistingUser = objectReader.readValue(updatedUserString);
-	        userRepository.save(updatedExistingUser);
-	        
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        userRepository.save(user);
         
-        return objectMapper.convertValue(updatedExistingUser, UpdateUserDto.class);
+        return objectMapper.convertValue(user, UpdateUserDto.class);
 	}
 }
