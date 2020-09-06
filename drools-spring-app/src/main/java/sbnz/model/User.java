@@ -1,5 +1,6 @@
 package sbnz.model;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class User extends Person {
 	private Double accountBalance;
 	private Double purchasePoints;
 	private Double recommendedDailyCalories;
+	private Double caloriesForStagnate;
 	private Double caloriesConsumed;
 	
 	@Enumerated(EnumType.STRING)
@@ -51,7 +53,7 @@ public class User extends Person {
 
 	public User() {}
 	
-	public User(String name, String lastName, String email, String username, String password, Date birthDate, Role role,
+	public User(String name, String lastName, String email, String username, String password, LocalDate birthDate, Role role,
 			Integer height, Double weight, Integer age, Gender gender, Goal goal, Double accountBalance, Double purchasePoints,
 			UserStatus accountStatus, Double dailyCalorieIntake, List<MealHistory> mealHistory,
 			List<WorkoutHistory> workoutHistory, Double recommendedDailyCalories) {
@@ -188,5 +190,13 @@ public class User extends Person {
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	public Double getCaloriesForStagnate() {
+		return caloriesForStagnate;
+	}
+
+	public void setCaloriesForStagnate(Double caloriesForStagnate) {
+		this.caloriesForStagnate = caloriesForStagnate;
 	}
 }

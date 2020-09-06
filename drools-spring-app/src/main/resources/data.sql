@@ -48,5 +48,5 @@ insert into recipe_ingredient_quantity (recipe_id, ingredient_id) values
 (3, 5);
 
 -- user
-insert into user(id, name, last_name, email, password, role, enabled, account_balance, weight, gender, activity, purchase_points) values
-(1, "user", "last name of user", "user@email.example", "pass", "ROLE_USER", 1, 0.0, 150.0, "MALE", "HEAVY", 600.0);
+insert into user(id, name, last_name, email, password, role, enabled, account_balance, weight, gender, activity, purchase_points, goal) values
+(1, "user", "last name of user", "user@email.example", "pass", "ROLE_USER", 1, 0.0, 150.0, "MALE", "HEAVY", 600.0, "STAGNATE");
