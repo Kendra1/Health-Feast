@@ -50,3 +50,43 @@ insert into recipe_ingredient_quantity (recipe_id, ingredient_id) values
 -- user
 insert into user(id, name, last_name, email, password, role, enabled, account_balance, weight, gender, activity, purchase_points, goal) values
 (1, "user", "last name of user", "user@email.example", "pass", "ROLE_USER", 1, 0.0, 150.0, "MALE", "HEAVY", 600.0, "STAGNATE");
+
+--exercises
+insert into exercise(id, muscle, name) values 
+(1, "gluteus", "squat"),
+(2, "hamstring", "lunges"),
+(3, "biceps", "biceps flexion"),
+(4, "shoulder", "shoulder press"),
+(5, "chest", "bench press"),
+(6, "body", "running");
+
+insert into exercise_quantity(id, repetitions, exercise_id) values
+(1, 10, 1),
+(2, 10, 2),
+(3, 10, 3),
+(4, 10, 4),
+(5, 10, 5),
+(6, 20, 1),
+(7, 20, 2),
+(8, 20, 3),
+(9, 20, 4),
+(10, 20, 5),
+(11, 5, 6);
+
+insert into workout(id, calories_burnt, duration, workout_type) values
+(1, 300, 90, "MUSCLE"),
+(2, 400, 60, "CARDIO" ),
+(3, 350, 70, "MIX");
+
+insert into workout_exercises(workout_id, exercises_id) values
+(1, 1),
+(1, 2),
+(1, 3),
+(1, 4),
+(1, 5),
+(2, 11),
+(3, 6),
+(3, 7),
+(3, 8),
+(3, 9),
+(3, 10);

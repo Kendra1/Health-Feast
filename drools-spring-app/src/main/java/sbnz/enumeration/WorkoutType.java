@@ -1,5 +1,5 @@
 package sbnz.enumeration;
 
 public enum WorkoutType {
-CARDIO, MUSCLE, MIX
+	CARDIO, MUSCLE, MIX
 }
