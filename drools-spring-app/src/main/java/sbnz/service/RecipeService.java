@@ -11,4 +11,6 @@ public interface RecipeService {
 	List<Recipe> findAll();
 
 	Recipe findRecipeById(Long id);
+
+	List<String> getRecipes();
 }

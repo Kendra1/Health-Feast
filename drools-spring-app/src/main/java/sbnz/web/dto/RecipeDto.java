@@ -8,6 +8,7 @@ import sbnz.enumeration.Kitchen;
 
 public class RecipeDto {
 	
+	private Long id;
 	private String name;
 	private int preparationTime;
 	private String instructions;
@@ -91,6 +92,14 @@ public class RecipeDto {
 
 	public void setIngredients(List<IngredientDto> ingredients) {
 		this.ingredients = ingredients;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 }

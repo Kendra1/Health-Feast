@@ -1,4 +1,4 @@
-package sbnz.web.controller;
+	package sbnz.web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import sbnz.web.dto.RecipeFilterDto;
+import sbnz.web.dto.WorkoutDto;
+import sbnz.web.dto.WorkoutFilterDto;
 import sbnz.web.dto.RecipeDto;
 
 public interface DroolsService {
@@ -15,5 +17,7 @@ public interface DroolsService {
 	Map<String, String> getWarningForRecipe(Long id);
 
 	List<RecipeDto> getRecommendedRecipes(Long id);
+
+	List<WorkoutDto> getWorkoutsByExercises(WorkoutFilterDto workoutFilterDto);
 
 }

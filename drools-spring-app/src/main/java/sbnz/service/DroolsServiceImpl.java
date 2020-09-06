@@ -1,8 +1,6 @@
 package sbnz.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,13 +12,20 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import sbnz.model.ExerciseQuantity;
 import sbnz.model.IngredientQuantity;
 import sbnz.model.Recipe;
+import sbnz.model.Workout;
 import sbnz.model.drools.PrioritizedRecipe;
 import sbnz.model.drools.PrioritizedRecipes;
+import sbnz.model.drools.PrioritizedWorkout;
+import sbnz.model.drools.PrioritizedWorkouts;
+import sbnz.web.dto.ExerciseDto;
 import sbnz.web.dto.IngredientDto;
 import sbnz.web.dto.RecipeDto;
 import sbnz.web.dto.RecipeFilterDto;
+import sbnz.web.dto.WorkoutDto;
+import sbnz.web.dto.WorkoutFilterDto;
 
 @Service
 public class DroolsServiceImpl implements DroolsService {
@@ -28,11 +33,14 @@ public class DroolsServiceImpl implements DroolsService {
 	private final KieContainer kieContainer;
 	private final RecipeService recipeService;
 	private final ObjectMapper objectMapper;
+	private final WorkoutService workoutService;
 	
-	public DroolsServiceImpl(KieContainer kieContainer, RecipeService recipeService, ObjectMapper objectMapper) {
+	public DroolsServiceImpl(KieContainer kieContainer, RecipeService recipeService, 
+			ObjectMapper objectMapper, WorkoutService workoutService) {
 		this.kieContainer = kieContainer;
 		this.recipeService = recipeService;
 		this.objectMapper = objectMapper;
+		this.workoutService = workoutService; 
 	}
 	
 	@Override
@@ -79,6 +87,22 @@ public class DroolsServiceImpl implements DroolsService {
 		kieSession.dispose();
 		
 		return prioritizedRecipes;
+	}
+	
+	private PrioritizedWorkouts sortWorkoutsByPriority(List<PrioritizedWorkout> pWorkouts) {
+		KieSession kieSession = kieContainer.newKieSession();
+
+		for (PrioritizedWorkout workout: pWorkouts) {
+			kieSession.insert(workout);
+			System.out.println(workout.getWorkout().getWorkoutType().toString());
+		}
+		
+		PrioritizedWorkouts prioritizedWorkouts = new PrioritizedWorkouts();
+//		kieSession.insert(prioritizedWorkouts);
+		kieSession.getAgenda().getAgendaGroup("workouts").setFocus();
+		kieSession.fireAllRules();
+		
+		return prioritizedWorkouts;
 	}
 
 	@Override
@@ -148,5 +172,49 @@ public class DroolsServiceImpl implements DroolsService {
 					
 					return ingredientDto;
 					}).collect(Collectors.toList());		
+	}
+
+	@Override
+	public List<WorkoutDto> getWorkoutsByExercises(WorkoutFilterDto workoutFilterDto) {
+		KieSession kieSession = kieContainer.newKieSession();
+		
+		List<Workout> allWorkouts = workoutService.findAll();
+		List<PrioritizedWorkout> pWorkouts = new ArrayList<>();
+
+		kieSession.insert(workoutFilterDto);
+		kieSession.insert(pWorkouts);
+		kieSession.insert(allWorkouts);
+		kieSession.getAgenda().getAgendaGroup("workouts").setFocus();
+		kieSession.fireAllRules();
+
+		//PrioritizedWorkouts prioritizedWorkouts = sortWorkoutsByPriority(pWorkouts);		
+		
+		//filter found workouts
+		KieSession kieSession1 = kieContainer.newKieSession();
+		kieSession1.insert(workoutFilterDto);
+		kieSession1.insert(pWorkouts);
+		kieSession1.getAgenda().getAgendaGroup("workouts-filters").setFocus();
+		kieSession1.fireAllRules();
+		System.out.println(pWorkouts.size());
+		System.out.println("filter " + workoutFilterDto.getFromCaloriesBurnt());
+
+
+		List<WorkoutDto> workoutDtos = new ArrayList<>();
+				
+		for (PrioritizedWorkout workout: pWorkouts) {
+			List<ExerciseDto> exerciseDto = mapExerciseToExerciseDto(workout.getWorkout().getExercises());
+			
+			WorkoutDto workoutDto = objectMapper.convertValue(workout.getWorkout(), WorkoutDto.class);
+			workoutDto.setExercises(exerciseDto);
+			workoutDtos.add(workoutDto);
+		}
+		
+		return workoutDtos;
+	}
+
+	private List<ExerciseDto> mapExerciseToExerciseDto(List<ExerciseQuantity> exercises) {
+		return exercises.stream()
+				.map(exerciseQuantity-> objectMapper.convertValue(exerciseQuantity.getExercise(), ExerciseDto.class))
+				.collect(Collectors.toList());	
 	}
 }

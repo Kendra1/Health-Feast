@@ -1,6 +1,7 @@
 package sbnz.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -31,6 +32,13 @@ public class RecipeServiceImpl implements RecipeService{
 	@Override
 	public Recipe findRecipeById(Long id) {
 		return recipeRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+	}
+
+	@Override
+	public List<String> getRecipes() {
+		List<Recipe> recipes = recipeRepository.findAll();
+		
+		return recipes.stream().map(recipe -> recipe.getName()).collect(Collectors.toList());
 	}
 
 }
