@@ -1,7 +1,10 @@
 package sbnz.service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
@@ -12,8 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
@@ -25,7 +26,11 @@ import sbnz.model.IngredientQuantity;
 import sbnz.model.MealHistory;
 import sbnz.model.Recipe;
 import sbnz.model.User;
+import sbnz.repository.IngredientQuantityRepository;
+import sbnz.repository.IngredientRepository;
+import sbnz.repository.MealHistoryRepository;
 import sbnz.repository.UserRepository;
+import sbnz.web.dto.DailyMealDto;
 import sbnz.web.dto.UpdateUserDto;
 import sbnz.web.dto.UserDto;
 
@@ -35,12 +40,20 @@ public class UserServiceImpl implements UserService {
 	private final KieContainer kieContainer;
 	private final UserRepository userRepository;
 	private final ObjectMapper objectMapper;
+	private final IngredientQuantityRepository ingredientQuantityRepository;
+	private final IngredientRepository ingredientRepository;
+	private final MealHistoryRepository mealHistoryRepository;
 
 	@Autowired
-	public UserServiceImpl(KieContainer kieContainer, UserRepository userRepository, ObjectMapper objectMapper) {
+	public UserServiceImpl(KieContainer kieContainer, UserRepository userRepository, 
+			ObjectMapper objectMapper, IngredientRepository ingredientRepository,
+			MealHistoryRepository mealHistoryRepository, IngredientQuantityRepository ingredientQuantityRepository) {
 		this.kieContainer = kieContainer;
 		this.userRepository = userRepository;
 		this.objectMapper = objectMapper;
+		this.ingredientRepository = ingredientRepository;
+		this.mealHistoryRepository = mealHistoryRepository;
+		this.ingredientQuantityRepository = ingredientQuantityRepository;
 	}
 
 	@Override
@@ -149,7 +162,7 @@ public class UserServiceImpl implements UserService {
     }
 	
 	@Override
-	public UpdateUserDto updateUser(UpdateUserDto updatedUser, MultipartFile image, Authentication authentication) {
+	public UpdateUserDto updateUser(UpdateUserDto updatedUser, Authentication authentication) {
 		User user = getUserFromAuthentication(authentication);
 		
 		MapperFactory mapperFactory = new DefaultMapperFactory.Builder().mapNulls(false).build();
@@ -159,5 +172,47 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         
         return objectMapper.convertValue(user, UpdateUserDto.class);
+	}
+
+	@Override
+	public DailyMealDto saveDailyMeal(DailyMealDto dailyMealDto, Authentication authentication) {
+		User user = getUserFromAuthentication(authentication);
+		
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		LocalDate date = LocalDate.parse(dailyMealDto.getDate(), formatter);
+				
+		List <IngredientQuantity> dailyMeals = dailyMealDto.getIngredientsDto().stream().map(ingredientDto -> {
+			Ingredient ingredient = ingredientRepository.findById(ingredientDto.getId()).orElseThrow(EntityNotFoundException::new);
+			IngredientQuantity ingredientQuantity = new IngredientQuantity(ingredient, ingredientDto.getQuantity());
+			
+			ingredientQuantityRepository.save(ingredientQuantity);
+			
+			return ingredientQuantity;
+		}).collect(Collectors.toList());
+		
+		MealHistory dailyMealHistory = new MealHistory();
+		KieSession kieSession = kieContainer.newKieSession();
+		kieSession.insert(user);
+		kieSession.insert(date);
+		kieSession.insert(dailyMealHistory);
+		kieSession.getAgenda().getAgendaGroup("dailyCalories").setFocus();
+		kieSession.fireAllRules();		
+		kieSession.dispose();
+		kieSession.destroy();
+		
+		mealHistoryRepository.save(dailyMealHistory);
+		
+		KieSession kieSession2 = kieContainer.newKieSession();
+		kieSession2.getAgenda().getAgendaGroup("dailyCalories").setFocus();
+		kieSession2.insert(dailyMeals);
+		kieSession2.insert(dailyMealHistory);
+		kieSession2.fireAllRules();		
+		kieSession2.dispose();
+		kieSession2.destroy();
+		
+		mealHistoryRepository.save(dailyMealHistory);
+        userRepository.save(user);
+		
+		return dailyMealDto;
 	}
 }

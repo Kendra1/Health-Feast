@@ -32,9 +32,8 @@ public class AuthUserController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public RegistrationDto registerUser(@RequestPart(value = "user") RegistrationDto registrationDto,
-                                		@RequestPart(value = "file", required = false) MultipartFile image) {
-        return authUserService.registerUser(registrationDto, image);
+    public RegistrationDto registerUser(@RequestBody RegistrationDto registrationDto) {
+        return authUserService.registerUser(registrationDto);
     }
 
     @GetMapping("/confirmAccount")
