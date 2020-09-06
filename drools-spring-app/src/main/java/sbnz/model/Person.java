@@ -1,6 +1,6 @@
 package sbnz.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import javax.persistence.Entity;
@@ -24,14 +24,14 @@ public class Person {
 	private String email;
 	private String username;
 	private String password;
-	private Date birthDate;
+	private LocalDate birthDate;
 	private UUID confirmationToken;
 	@Enumerated(EnumType.STRING)
 	private Role role;
 	
 	public Person() {}
 	
-	public Person(String name, String lastName, String email, String username, String password, Date birthDate,
+	public Person(String name, String lastName, String email, String username, String password, LocalDate birthDate,
 			Role role) {
 		super();
 		this.name = name;
@@ -79,10 +79,10 @@ public class Person {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public Date getBirthDate() {
+	public LocalDate getBirthDate() {
 		return birthDate;
 	}
-	public void setBirthDate(Date birthDate) {
+	public void setBirthDate(LocalDate birthDate) {
 		this.birthDate = birthDate;
 	}
 	public Role getRole() {

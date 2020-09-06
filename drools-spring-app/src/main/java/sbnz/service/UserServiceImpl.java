@@ -168,7 +168,8 @@ public class UserServiceImpl implements UserService {
 		MapperFactory mapperFactory = new DefaultMapperFactory.Builder().mapNulls(false).build();
         MapperFacade mapperFacade = mapperFactory.getMapperFacade();
         mapperFacade.map(updatedUser, user);
-        
+		user.setBirthDate(convertStringToLocalDate(updatedUser.getBirthDate()));
+
         userRepository.save(user);
         
         return objectMapper.convertValue(user, UpdateUserDto.class);
@@ -177,9 +178,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public DailyMealDto saveDailyMeal(DailyMealDto dailyMealDto, Authentication authentication) {
 		User user = getUserFromAuthentication(authentication);
-		
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-		LocalDate date = LocalDate.parse(dailyMealDto.getDate(), formatter);
+		LocalDate date =  convertStringToLocalDate(dailyMealDto.getDate());
 				
 		List <IngredientQuantity> dailyMeals = dailyMealDto.getIngredientsDto().stream().map(ingredientDto -> {
 			Ingredient ingredient = ingredientRepository.findById(ingredientDto.getId()).orElseThrow(EntityNotFoundException::new);
@@ -214,5 +213,10 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 		
 		return dailyMealDto;
+	}
+	
+	private LocalDate convertStringToLocalDate (String date) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		return LocalDate.parse(date, formatter);
 	}
 }
