@@ -25,6 +25,7 @@ public class User extends Person {
 	private Double accountBalance;
 	private Double purchasePoints;
 	private Double recommendedDailyCalories;
+	private Double caloriesForStagnate;
 	private Double caloriesConsumed;
 	
 	@Enumerated(EnumType.STRING)
@@ -189,5 +190,13 @@ public class User extends Person {
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	public Double getCaloriesForStagnate() {
+		return caloriesForStagnate;
+	}
+
+	public void setCaloriesForStagnate(Double caloriesForStagnate) {
+		this.caloriesForStagnate = caloriesForStagnate;
 	}
 }
