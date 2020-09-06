@@ -12,6 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -28,7 +30,11 @@ public class Recipe {
 	
 	private String name;
 	
-	@OneToMany
+	@ManyToMany
+	@JoinTable(
+			 name = "recipe_ingredient_quantity", 
+			 joinColumns = @JoinColumn(name = "recipe_id"), 
+			 inverseJoinColumns = @JoinColumn(name = "ingredient_id"))
 	private List<IngredientQuantity> ingredients;
 	
 	private int preparationTime;
@@ -48,28 +54,11 @@ public class Recipe {
 	@Column(name = "dietTypes")
 	@CollectionTable
 	private List<Diet> dietTypes;
+
+	@OneToMany
+	private List<Recipe> recommendedRecipes;
 	
-	@OneToOne
-	@JoinColumn(name = "specificIngredient_id")
-	private Ingredient specificIngredient;
-
-	public Recipe(String name, List<IngredientQuantity> ingredients, int preparationTime, String instructions,
-			int noOfPeople, Category mealType, Kitchen kitchenType, List<Diet> dietTypes,
-			Ingredient specificIngredient) {
-		super();
-		this.name = name;
-		this.ingredients = ingredients;
-		this.preparationTime = preparationTime;
-		this.instructions = instructions;
-		this.noOfPeople = noOfPeople;
-		this.mealType = mealType;
-		this.kitchenType = kitchenType;
-		this.specificIngredient = specificIngredient;
-		this.dietTypes = dietTypes;
-	}
-
 	public Recipe() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public Long getId() {
@@ -136,14 +125,6 @@ public class Recipe {
 		this.kitchenType = kitchenType;
 	}
 
-	public Ingredient getSpecificIngredient() {
-		return specificIngredient;
-	}
-
-	public void setSpecificIngredient(Ingredient specificIngredient) {
-		this.specificIngredient = specificIngredient;
-	}
-
 	public List<Diet> getDietTypes() {
 		return dietTypes;
 	}
@@ -160,6 +141,14 @@ public class Recipe {
 		this.calories = calories;
 	}
 	
+	public List<Recipe> getRecommendedRecipes() {
+		return recommendedRecipes;
+	}
+
+	public void setRecommendedRecipes(List<Recipe> recommendedRecipes) {
+		this.recommendedRecipes = recommendedRecipes;
+	}
+
 	public double calculateCalories() {
 		double calories = 0;
 		for (IngredientQuantity ing: ingredients) {
@@ -167,5 +156,13 @@ public class Recipe {
 		}
 		
 		return calories;
+	}
+
+	@Override
+	public String toString() {
+		return "Recipe [id=" + id + ", name=" + name + ", ingredients=" + ingredients + ", preparationTime="
+				+ preparationTime + ", instructions=" + instructions + ", noOfPeople=" + noOfPeople + ", mealType="
+				+ mealType + ", kitchenType=" + kitchenType + ", calories=" + calories + ", dietTypes=" + dietTypes
+				+ ", recommendedRecipes=" + recommendedRecipes + "]";
 	}	
 }

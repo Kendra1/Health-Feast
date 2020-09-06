@@ -1,5 +1,9 @@
 package sbnz.service;
 
+import java.util.List;
+
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.stereotype.Service;
 
 import sbnz.model.Recipe;
@@ -17,6 +21,16 @@ public class RecipeServiceImpl implements RecipeService{
 	@Override
 	public Recipe findRecipeByName(String name) {
 		return recipeRepository.findByName(name);
+	}
+
+	@Override
+	public List<Recipe> findAll() {
+		return recipeRepository.findAll();
+	}
+
+	@Override
+	public Recipe findRecipeById(Long id) {
+		return recipeRepository.findById(id).orElseThrow(EntityNotFoundException::new);
 	}
 
 }

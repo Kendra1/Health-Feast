@@ -44,7 +44,7 @@ public class User extends Person {
 	private double activityCount;
 	
 	@OneToMany(mappedBy = "user")
-	private List<MealHistory> mealHistory;
+	private List<MealHistory> mealHistories;
 	
 	@OneToMany(mappedBy = "user")
 	private List<WorkoutHistory> workoutHistory;
@@ -65,7 +65,7 @@ public class User extends Person {
 		this.purchasePoints = purchasePoints;
 		this.userStatus = accountStatus;
 		this.recommendedDailyCalories = recommendedDailyCalories;
-		this.mealHistory = mealHistory;
+		this.mealHistories = mealHistory;
 		this.workoutHistory = workoutHistory;
 	}
 
@@ -150,12 +150,12 @@ public class User extends Person {
 		this.caloriesConsumed = caloriesConsumed;
 	}
 
-	public List<MealHistory> getMealHistory() {
-		return mealHistory;
+	public List<MealHistory> getMealHistories() {
+		return mealHistories;
 	}
 
-	public void setMealHistory(List<MealHistory> mealHistory) {
-		this.mealHistory = mealHistory;
+	public void setMealHistories(List<MealHistory> mealHistories) {
+		this.mealHistories = mealHistories;
 	}
 
 	public List<WorkoutHistory> getWorkoutHistory() {

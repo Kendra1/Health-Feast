@@ -1,148 +1,102 @@
 package sbnz
 
 import java.util.List;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.ArrayList;
 import sbnz.web.dto.RecipeFilterDto;
 import sbnz.model.drools.PrioritizedRecipe;
-import sbnz.model.drools.Recipes;
+import sbnz.model.drools.PrioritizedRecipes;
 import sbnz.service.RecipeService;
 import sbnz.model.Recipe;
-
-global Recipes globalRecipes;
-
-rule "Create new list of recipes"	
-	agenda-group "recipes"
-	when
-	    not Recipes()
-	then
-	    Recipes recipes = globalRecipes;
-	    insert( recipes );
-end
+import sbnz.model.IngredientQuantity;
 
 rule "Sort recipes by priority"
 	agenda-group "recipes"
-	salience -150
+	no-loop
 	when
-	    $recipe: PrioritizedRecipe( $name: name, $priority: priority )
-	    $recipes: Recipes( recipes not contains $recipe )
-	    not PrioritizedRecipe( this != $recipe, this not memberOf $recipes, priority < $priority )
+    	$prioritizedRecipe: PrioritizedRecipe( $recipe: recipe, $priority: priority )
+  		$prioritizedRecipes: PrioritizedRecipes( $recipes: recipes not contains $prioritizedRecipe )
+    	not PrioritizedRecipe( this != $prioritizedRecipe, this not memberOf $recipes, priority < $priority )
 	then
-	    globalRecipes.getRecipes().add($recipe);
+    	$prioritizedRecipes.getRecipes().add( $prioritizedRecipe );
+    	update ( $prioritizedRecipes );
 end
 
-rule "Pizza"
+rule "Find recipe and priority"
 	agenda-group "recipes"
+	no-loop
 	when
-		$recipeService: RecipeService()
+		$prioritizedRecipes: List()
+		$allRecipes: List(size > 0)
 		$recipeFilter: RecipeFilterDto($ingredients : ingredients)
-	    $ing: Number(intValue > 0) from accumulate (
-	    	String(this == "base" || this == "cheese" || this == "ham" || this == "mushrooms" || this == "ketchup")
-	    from $ingredients,
-	    init(int count = 0;),
-        action(count += 1;),
-        result(count))
-	    
+		$value : List() from accumulate ( $recipe: Recipe($recipeIngredients : ingredients) from $allRecipes,
+			init( List<PrioritizedRecipe> pRecipes = new ArrayList(); ),
+			action(
+				int count = 0;
+				for (Object ing: $recipeIngredients) {
+					
+					boolean containsIngredient = $ingredients.contains(((IngredientQuantity)ing).getIngredient().getName());
+					
+					if (containsIngredient && ((IngredientQuantity) ing).isSpecificIngredient()) {
+						count = -1;
+						break;
+					} 
+					//check how many entered ingredients does recipe have 
+					else if (containsIngredient){
+						count += 1;	
+					}
+				}
+				
+				//if recipe is specific, then priority is -1
+				int priority = count == -1 ? count : $recipeIngredients.size() / count;
+				PrioritizedRecipe prioritizedRecipe = new PrioritizedRecipe($recipe, priority);
+				pRecipes.add(prioritizedRecipe);
+				),
+			result(pRecipes))
 	then
-		Recipe foundRecipe = $recipeService.findRecipeByName("pizza");
-		PrioritizedRecipe recipe = new PrioritizedRecipe(foundRecipe.getName(), $ing, foundRecipe.getIngredients().size());
-		insert(recipe);
-		insert(foundRecipe);
+		$prioritizedRecipes.addAll($value);
+		update ($prioritizedRecipes);
 end
 
-rule "Filter by kitchen type"
-	agenda-group "recipes"
-	when
-		$recipeFilter: RecipeFilterDto($kitchenType: kitchenType)
-		$prioritizedRecipe: PrioritizedRecipe($name: name)
-		$recipe: Recipe (kitchenType.toString() != $kitchenType, name == $name)
-	then 
-		delete($prioritizedRecipe);
-end
-
-rule "Filter by meal type"
-	agenda-group "recipes"
-	when
-		$recipeFilter: RecipeFilterDto($mealType: mealType)
-		$prioritizedRecipe: PrioritizedRecipe($name: name)
-		$recipe: Recipe (mealType.toString() != $mealType, name == $name)
-	then 
-		delete($prioritizedRecipe);
-end
-
-rule "Filter by calories"
-	agenda-group "recipes"
-	when
-		$recipeFilter: RecipeFilterDto($fromKcal: fromKcal, $toKcal: toKcal)
-		$prioritizedRecipe: PrioritizedRecipe($name: name)
-		$recipe: Recipe (calories < $fromKcal || calories > $toKcal , name == $name)
-	then 
-		delete($prioritizedRecipe);
-end
-
-rule "Filter by preparation time"
-	agenda-group "recipes"
-	when
-		$recipeFilter: RecipeFilterDto($fromMins: fromMins, $toMins: toMins)
-		$prioritizedRecipe: PrioritizedRecipe($name: name)
-		$recipe: Recipe (preparationTime < $fromMins || preparationTime > $toMins , name == $name)
-	then 
-		delete($prioritizedRecipe);
-end
-
-rule "Filter by number of people"
-	agenda-group "recipes"
-	when
-		$recipeFilter: RecipeFilterDto($fromPpl: fromPpl, $toPpl: toPpl)
-		$prioritizedRecipe: PrioritizedRecipe($name: name)
-		$recipe: Recipe (noOfPeople < $fromPpl || noOfPeople > $toPpl , name == $name)
-	then 
-		delete($prioritizedRecipe);
-end
-/*
 rule "Find recipes by name"
-
 	agenda-group "recipes"
+	no-loop
 	when
-		$recipe: RecipeDto($recipeName: name)
+		$recipeName: String()
+		$recipes: List(size > 0)
+		$foundRecipes: List()
+        $items : List () from collect( Recipe( name contains $recipeName  ) from $recipes)
 	then
-		
-
-end*/
-
-
-/*
-rule "Muffin"
-	agenda-group "recipes"
-	when
-		$recipeService: RecipeService()
-		$ingredients: List() from collect(IngredientDto())
-	    $ing: Number(intValue > 0) from accumulate (
-	    	IngredientDto(name == "flour" || name == "sugar" || name == "cocoa" || name == "chocolate" || name == "milk" || name == "egg" || name == "oil")
-	    from $ingredients,
-	    init(int count = 0;),
-        action(count += 1;),
-        result(count))
-	    
-	then
-		Recipe foundRecipe = $recipeService.findRecipeByName("muffin");
-		PrioritizedRecipe recipe = new PrioritizedRecipe(foundRecipe.getName(), $ing, foundRecipe.getIngredients().size());
-		insert(recipe);
+		$foundRecipes.addAll($items);
+		update($foundRecipes);
 end
 
-rule "Cookies"
+rule "Find warnings of ingredients for selected recipe"
 	agenda-group "recipes"
+	no-loop
 	when
-		$recipeService: RecipeService()
-		$ingredients: List() from collect(IngredientDto())
-	    $ing: Number(intValue > 0) from accumulate (
-	    	IngredientDto(name == "flour" || name == "sugar" || name == "brown sugar" || name == "chocolate" || name == "butter" || name == "egg")
-	    from $ingredients,
-	    init(int count = 0;),
-        action(count += 1;),
-        result(count))
-	    
+		$ingredientWarning : Map()
+		$recipe: Recipe($recipeIngredients : ingredients) 
+		$warnings: Map() from accumulate ( IngredientQuantity($ingredient: ingredient, ingredient.warning != null) from $recipeIngredients,
+			init(Map<String, String> ingredientWithWarning = new HashMap();),
+			action(ingredientWithWarning.put($ingredient.getName(), $ingredient.getWarning());),
+			result(ingredientWithWarning)
+		)
 	then
-		Recipe foundRecipe = $recipeService.findRecipeByName("cookies");
-		PrioritizedRecipe recipe = new PrioritizedRecipe(foundRecipe.getName(), $ing, foundRecipe.getIngredients().size());
-		insert(recipe);
-end*/
+		$ingredientWarning.putAll($warnings);
+		insert($ingredientWarning);
+end
+
+rule "Find recommended recipes"
+	agenda-group "recipes"
+	no-loop
+	when
+		$recipe: Recipe($recommendedRecipes: recommendedRecipes, recommendedRecipes.size() > 0)
+		$recipes: List()
+        $foundRecipes : List () from collect( Recipe() from $recommendedRecipes)
+	then
+		$recipes.addAll($foundRecipes);
+		update($recipes);
+end

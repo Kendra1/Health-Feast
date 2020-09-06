@@ -1,5 +1,7 @@
 package sbnz.web.dto;
 
+import sbnz.enumeration.Role;
+
 public class LoginResponseDto {
 	
 	private Long id;
@@ -7,17 +9,19 @@ public class LoginResponseDto {
 	private String firstName;
 	private String lastName;
 	private String token;
+	private Role role;
 	
 	public LoginResponseDto() {
 	}
 	
-	public LoginResponseDto(Long id, String email, String firstName, String lastName, String token) {
+	public LoginResponseDto(Long id, String email, String firstName, String lastName, String token, Role role) {
 		super();
 		this.id = id;
 		this.email = email;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.token = token;
+		this.role = role;
 	}
 
 	public Long getId() {
@@ -58,5 +62,13 @@ public class LoginResponseDto {
 
 	public void setToken(String token) {
 		this.token = token;
+	}
+
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
 	}
 }

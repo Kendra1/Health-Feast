@@ -1,0 +1,82 @@
+package sbnz;
+
+import sbnz.model.User;
+import sbnz.model.MealHistory;
+import sbnz.model.Ingredient;
+import sbnz.model.IngredientQuantity;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.ArrayList;
+
+rule "Calculate entered daily calories"
+	agenda-group "dailyCalories"
+	no-loop true
+	when 
+		$date: LocalDate()
+		$user: User()
+		$mealHistory: MealHistory($meals: meals, $date == date, $user == user)
+		accumulate(
+		 	IngredientQuantity($quantity: quantity, $ingredient: ingredient) from $meals
+		 	and Ingredient($calories: calories) from $ingredient,
+		 	$total: sum($calories * $quantity)
+		 )
+	then
+		$user.setCaloriesConsumed($total);
+		update($user);
+		System.out.println("Calculate meal ");
+		
+end
+
+rule "Find meal history for specific user on specific day"
+	agenda-group "dailyCalories"
+	no-loop
+	when
+		$user: User( $mealHistories : mealHistories )
+		$date: LocalDate()
+		$dailyMealHistory : MealHistory();
+	    $foundMealHistories : List () from collect( MealHistory( meals != null, $date == date, $user == user ) from $mealHistories)
+	then
+		if ($foundMealHistories.size() > 0) {
+			for (Object mealHistory : $foundMealHistories){
+				$dailyMealHistory = ( (MealHistory) mealHistory );
+				update ( $dailyMealHistory );
+				System.out.println("Found " + $foundMealHistories.size());
+			}
+		} else {
+			$dailyMealHistory.setDate($date);
+			$dailyMealHistory.setUser($user);
+			$dailyMealHistory.setMeals(new ArrayList<IngredientQuantity>());
+			update ( $dailyMealHistory );
+			System.out.println("Create new one ");
+		}
+end
+
+rule "Insert daily meal into users meal history for that day"
+	agenda-group "dailyCalories"
+	no-loop
+	when
+		$dailyMealHistory: MealHistory( $meals : meals )
+		$dailyMeals : List()
+	then
+		$meals.addAll($dailyMeals);
+		update ($dailyMealHistory);
+		System.out.println("Add meals " + $meals.size());
+		
+end
+
+rule "Warning: daily intake of calories is passed"
+	agenda-group "dailyCalories"
+	when 
+		$user: User( caloriesConsumed != null, recommendedDailyCalories!= null, caloriesConsumed > recommendedDailyCalories, $excess: (caloriesConsumed - recommendedDailyCalories))
+	then
+		System.out.println("You passed your daily intake of calories for " + $excess);
+end
+
+
+rule "Left number of calories to take today"
+	agenda-group "dailyCalories"
+	when 
+		$user: User( caloriesConsumed != null, recommendedDailyCalories!= null, caloriesConsumed < recommendedDailyCalories, $leftCalories: (recommendedDailyCalories - caloriesConsumed))
+	then
+		System.out.println("It is left " + $leftCalories + " calories to take today");
+end

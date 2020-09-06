@@ -4,23 +4,18 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import java.time.LocalDate;
-import java.util.UUID;
-
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import sbnz.event.RegistrationSuccessEvent;
 import sbnz.exception.InvalidLoginException;
 import sbnz.exception.InvalidTokenException;
 import sbnz.model.ConfirmationToken;
-import sbnz.model.Person;
 import sbnz.model.User;
 import sbnz.repository.ConfirmationTokenRepository;
 import sbnz.repository.UserRepository;
@@ -61,7 +56,7 @@ public class AuthUserServiceImpl implements AuthUserService {
 	           User user = (User) authentication.getPrincipal();
 	           String token = jwtUtil.createJwt(user);
 
-	           return new LoginResponseDto(user.getId(), user.getEmail(), user.getName(), user.getLastName(), token);
+	           return new LoginResponseDto(user.getId(), user.getEmail(), user.getName(), user.getLastName(), token, user.getRole());
 	           
 	     	} catch (Exception ex) {
 	     		throw new InvalidLoginException("Login failed. " + ex.getMessage());
@@ -69,7 +64,7 @@ public class AuthUserServiceImpl implements AuthUserService {
 	}
 
 	@Override
-	public RegistrationDto registerUser(RegistrationDto registrationDto, MultipartFile image) {
+	public RegistrationDto registerUser(RegistrationDto registrationDto) {
 		User user = objectMapper.convertValue(registrationDto, User.class);
 
         userRepository.save(user);

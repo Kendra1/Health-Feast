@@ -3,11 +3,11 @@ package sbnz.model.drools;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Recipes {
+public class PrioritizedRecipes {
 	
 	private List<PrioritizedRecipe> recipes = new ArrayList<>();
 	
-	public Recipes() {}
+	public PrioritizedRecipes() {}
 
 	public List<PrioritizedRecipe> getRecipes() {
 		return recipes;

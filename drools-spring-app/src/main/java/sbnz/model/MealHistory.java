@@ -1,6 +1,6 @@
 package sbnz.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -18,7 +18,7 @@ public class MealHistory {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	private Date date;
+	private LocalDate date;
 	
 	//this can be one/more ingredient/recipe
 	@OneToMany
@@ -40,11 +40,11 @@ public class MealHistory {
 		this.id = id;
 	}
 
-	public Date getDate() {
+	public LocalDate getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(LocalDate date) {
 		this.date = date;
 	}
 
