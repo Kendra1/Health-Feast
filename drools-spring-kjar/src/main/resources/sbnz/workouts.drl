@@ -1,0 +1,52 @@
+package sbnz
+
+import java.util.List;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
+import sbnz.model.ExerciseQuantity;
+import sbnz.model.Workout;
+import sbnz.model.drools.PrioritizedWorkout;
+import sbnz.model.drools.PrioritizedWorkouts;
+import sbnz.web.dto.WorkoutFilterDto;
+
+rule "Find workouts and priority"
+	agenda-group "workouts"
+	no-loop
+	when
+		$prioritizedWorkouts: List()
+		$allWorkouts: List(size > 0)
+		$workoutFilter: WorkoutFilterDto($exercises : exercises)
+		$value : List() from accumulate ( $workout: Workout($workoutExercises : exercises) from $allWorkouts,
+			init( List<PrioritizedWorkout> pWorkouts = new ArrayList(); ),
+			action(
+				int count = 0;
+				for (Object workoutExercise: $workoutExercises) {
+					if ( $exercises.contains(((ExerciseQuantity) workoutExercise).getExercise().getName()) ) {
+						count += 1;	
+					}
+				}
+				
+				if ( count > 0 ) {
+					int priority = $workoutExercises.size() / count;
+					PrioritizedWorkout prioritizedWorkout = new PrioritizedWorkout($workout, priority);
+					pWorkouts.add(prioritizedWorkout);
+				}
+			),
+			result(pWorkouts))
+	then
+		$prioritizedWorkouts.addAll($value);
+		update ($prioritizedWorkouts);
+end
+/*
+rule "Sort workouts by priority"
+	agenda-group "workouts"
+	no-loop
+	when
+    	$prioritizedWorkout: PrioritizedWorkout( $workout: workout, $priority: priority )
+  		$prioritizedWorkouts: PrioritizedWorkouts( $workouts: workouts not contains $prioritizedWorkout )
+    	not PrioritizedWorkout( this != $prioritizedWorkout, this not memberOf $workouts, priority < $priority)
+	then
+    	$prioritizedWorkouts.getWorkouts().add( $prioritizedWorkout );
+    	update ( $prioritizedWorkouts );
+end*/

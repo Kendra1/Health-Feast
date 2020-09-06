@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import sbnz.service.DroolsService;
 import sbnz.web.dto.RecipeFilterDto;
+import sbnz.web.dto.WorkoutDto;
+import sbnz.web.dto.WorkoutFilterDto;
 import sbnz.web.dto.RecipeDto;
 
 @RestController
@@ -40,5 +42,10 @@ public class DroolsController {
 	@GetMapping("recipe/{id}/recommendedRecipes")
 	public List<RecipeDto> getRecommendedRecipes(@PathVariable Long id){
 		return droolsService.getRecommendedRecipes(id);
+	}
+	
+	@GetMapping("/workouts")
+	public List<WorkoutDto> getWorkouts(@RequestBody WorkoutFilterDto workoutFilterDto) {
+		return droolsService.getWorkoutsByExercises(workoutFilterDto);
 	}
 }

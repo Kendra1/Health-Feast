@@ -8,6 +8,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 import sbnz.enumeration.WorkoutType;
@@ -19,13 +22,19 @@ public class Workout {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@OneToMany
+	@ManyToMany
+	@JoinTable(
+			 name = "workout_exercises_quantity", 
+			 joinColumns = @JoinColumn(name = "workout_id"), 
+			 inverseJoinColumns = @JoinColumn(name = "exercise_id"))
 	private List<ExerciseQuantity> exercises;
 	
 	@Enumerated(EnumType.STRING)
 	private WorkoutType workoutType;
 	private int duration;
 	private int caloriesBurnt;
+	
+	public Workout () {}
 	
 	public Workout(List<ExerciseQuantity> exercises, WorkoutType type, int duration, int caloriesBurnt) {
 		this.exercises = exercises;
@@ -68,5 +77,10 @@ public class Workout {
 		this.workoutType = workoutType;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return "Workout [id=" + id + ", exercises=" + exercises + ", workoutType=" + workoutType + ", duration="
+				+ duration + ", caloriesBurnt=" + caloriesBurnt + "]";
+	}
+
 }

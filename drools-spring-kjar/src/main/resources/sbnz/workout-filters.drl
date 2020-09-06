@@ -1,0 +1,43 @@
+package sbnz
+
+import java.util.List;
+import java.util.ArrayList;
+import sbnz.web.dto.WorkoutFilterDto;
+import sbnz.model.drools.PrioritizedWorkout;
+import sbnz.model.drools.PrioritizedWorkouts;
+
+rule "Filter by workout type"
+	agenda-group "workouts-filters"
+	no-loop
+	lock-on-active
+	when
+		$workoutFilter: WorkoutFilterDto($workoutType: workoutType, workoutType != null)
+		$prioritizedWorkouts: List()
+		$items : List () from collect( PrioritizedWorkout( workout.workoutType.toString() != $workoutType ) from $prioritizedWorkouts)
+	then 
+		modify ( $prioritizedWorkouts ) { removeAll($items); }
+end
+
+rule "Filter by workout duration of workout"
+	agenda-group "workouts-filters"
+	no-loop
+	lock-on-active
+	when
+		$workoutFilter: WorkoutFilterDto( $fromDuration: fromDuration, fromDuration != null, $toDuration: toDuration, toDuration != null )
+		$prioritizedWorkouts: List()
+		$items : List () from collect( PrioritizedWorkout( workout.duration < $fromDuration || workout.duration > $toDuration) from $prioritizedWorkouts)
+	then 
+		modify ( $prioritizedWorkouts ) { removeAll($items); }
+end
+
+rule "Filter by workout calories burnt"
+	agenda-group "workouts-filters"
+	no-loop
+	lock-on-active
+	when
+		$workoutFilter: WorkoutFilterDto( $fromCaloriesBurnt: fromCaloriesBurnt, fromCaloriesBurnt != null, $toCaloriesBurnt: toCaloriesBurnt, toCaloriesBurnt != null )
+		$prioritizedWorkouts: List()
+		$items : List () from collect( PrioritizedWorkout( workout.caloriesBurnt < $fromCaloriesBurnt || workout.caloriesBurnt > $toCaloriesBurnt ) from $prioritizedWorkouts)
+	then 
+		modify ( $prioritizedWorkouts ) { removeAll($items); }
+end

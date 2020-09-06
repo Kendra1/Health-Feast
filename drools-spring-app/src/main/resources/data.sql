@@ -78,7 +78,7 @@ insert into workout(id, calories_burnt, duration, workout_type) values
 (2, 400, 60, "CARDIO" ),
 (3, 350, 70, "MIX");
 
-insert into workout_exercises(workout_id, exercises_id) values
+insert into workout_exercises_quantity(workout_id, exercise_id) values
 (1, 1),
 (1, 2),
 (1, 3),
@@ -89,4 +89,5 @@ insert into workout_exercises(workout_id, exercises_id) values
 (3, 7),
 (3, 8),
 (3, 9),
-(3, 10);
+(3, 10),
+(3, 11);

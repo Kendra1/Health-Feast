@@ -1,7 +1,5 @@
 package sbnz.model.drools;
 
-import java.util.Comparator;
-
 import sbnz.model.Recipe;
 
 public class PrioritizedRecipe{

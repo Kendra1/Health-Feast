@@ -75,7 +75,7 @@ rule "Goal gain weight"
     when
     	$user: User(caloriesForStagnate != null, goal == Goal.GAIN_WEIGHT, $recommended: (caloriesForStagnate * 1.5))
     then
-        $user.setRecommendedDailyCalories($caloriesForStagnate);
+        $user.setRecommendedDailyCalories($recommended);
         update($user);
 end
 
@@ -86,7 +86,7 @@ rule "Goal lose weight"
     when
     	$user: User(caloriesForStagnate != null, goal == Goal.LOSE_WEIGHT, $recommended: (caloriesForStagnate * 0.5))
     then
-        $user.setRecommendedDailyCalories($caloriesForStagnate);
+        $user.setRecommendedDailyCalories($recommended);
         update($user);
 end
 
