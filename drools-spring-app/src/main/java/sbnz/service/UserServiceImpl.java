@@ -30,6 +30,7 @@ import sbnz.repository.IngredientQuantityRepository;
 import sbnz.repository.IngredientRepository;
 import sbnz.repository.MealHistoryRepository;
 import sbnz.repository.UserRepository;
+import sbnz.util.LocalDateConverter;
 import sbnz.web.dto.DailyMealDto;
 import sbnz.web.dto.UpdateUserDto;
 import sbnz.web.dto.UserDto;
@@ -166,13 +167,13 @@ public class UserServiceImpl implements UserService {
 		User user = getUserFromAuthentication(authentication);
 		
 		MapperFactory mapperFactory = new DefaultMapperFactory.Builder().mapNulls(false).build();
+		mapperFactory.getConverterFactory().registerConverter(new LocalDateConverter());
         MapperFacade mapperFacade = mapperFactory.getMapperFacade();
         mapperFacade.map(updatedUser, user);
-		user.setBirthDate(convertStringToLocalDate(updatedUser.getBirthDate()));
 
         userRepository.save(user);
         
-        return objectMapper.convertValue(user, UpdateUserDto.class);
+        return mapperFacade.map(user, UpdateUserDto.class);
 	}
 
 	@Override

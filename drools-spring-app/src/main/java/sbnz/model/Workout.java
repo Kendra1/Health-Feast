@@ -3,6 +3,8 @@ package sbnz.model;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,13 +22,14 @@ public class Workout {
 	@OneToMany
 	private List<ExerciseQuantity> exercises;
 	
-	private WorkoutType type;
+	@Enumerated(EnumType.STRING)
+	private WorkoutType workoutType;
 	private int duration;
 	private int caloriesBurnt;
 	
 	public Workout(List<ExerciseQuantity> exercises, WorkoutType type, int duration, int caloriesBurnt) {
 		this.exercises = exercises;
-		this.type = type;
+		this.setWorkoutType(type);
 		this.duration = duration;
 		this.caloriesBurnt = caloriesBurnt;
 	}
@@ -43,12 +46,7 @@ public class Workout {
 	public void setExercises(List<ExerciseQuantity> exercises) {
 		this.exercises = exercises;
 	}
-	public WorkoutType getType() {
-		return type;
-	}
-	public void setType(WorkoutType type) {
-		this.type = type;
-	}
+	
 	public int getDuration() {
 		return duration;
 	}
@@ -60,6 +58,14 @@ public class Workout {
 	}
 	public void setCaloriesBurnt(int caloriesBurnt) {
 		this.caloriesBurnt = caloriesBurnt;
+	}
+
+	public WorkoutType getWorkoutType() {
+		return workoutType;
+	}
+
+	public void setWorkoutType(WorkoutType workoutType) {
+		this.workoutType = workoutType;
 	}
 	
 	
