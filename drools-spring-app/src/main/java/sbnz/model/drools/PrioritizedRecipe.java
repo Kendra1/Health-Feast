@@ -1,27 +1,33 @@
 package sbnz.model.drools;
 
-public class PrioritizedRecipe {
+import java.util.Comparator;
 
-	private String name;
+import sbnz.model.Recipe;
+
+public class PrioritizedRecipe{
+
+	private Recipe recipe;
 	private int priority;
 	
-	public PrioritizedRecipe(String name, Number foundIngridients, int ingridients) {
-		this.name = name;
-		this.priority = ingridients / (int) foundIngridients;
+	public PrioritizedRecipe(Recipe recipe, int priority) {
+		this.recipe = recipe;
+		this.priority = priority;
 	}
 	
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
 	public int getPriority() {
 		return priority;
 	}
 	public void setPriority(int priority) {
 		this.priority = priority;
 	}
-	
-	
+
+
+	public Recipe getRecipe() {
+		return recipe;
+	}
+
+
+	public void setRecipe(Recipe recipe) {
+		this.recipe = recipe;
+	}
 }

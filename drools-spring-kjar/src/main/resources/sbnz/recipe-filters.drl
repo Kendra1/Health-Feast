@@ -1,0 +1,67 @@
+package sbnz
+
+import java.util.List;
+import java.util.ArrayList;
+import sbnz.web.dto.RecipeFilterDto;
+import sbnz.model.drools.PrioritizedRecipe;
+import sbnz.model.drools.PrioritizedRecipes;
+import sbnz.service.RecipeService;
+import sbnz.model.Recipe;
+import sbnz.model.IngredientQuantity;
+
+rule "Filter by allergens"
+	agenda-group "recipes"
+	when
+		$prioritizedRecipe: PrioritizedRecipe( $ingredients: recipe.ingredients )
+        $recipeFilter: RecipeFilterDto( $allergens:allergens, allergens != null )
+		$numOfAllergens : Number (intValue > 0) from accumulate($i:IngredientQuantity($name : ingredient.name, $allergens.contains($name)) from $ingredients,
+        	count($i)
+        )
+	then 
+		delete($prioritizedRecipe);
+end
+
+rule "Filter by kitchen type"
+	agenda-group "recipes"
+	when
+		$recipeFilter: RecipeFilterDto($kitchenType: kitchenType, kitchenType != null)
+		$prioritizedRecipe: PrioritizedRecipe(recipe.kitchenType.toString() != $kitchenType)
+	then 
+		delete($prioritizedRecipe);
+end
+
+rule "Filter by meal type"
+	agenda-group "recipes"
+	when
+		$recipeFilter: RecipeFilterDto($mealType: mealType, mealType != null)
+		$prioritizedRecipe: PrioritizedRecipe(recipe.mealType.toString() != $mealType)
+	then 
+		delete($prioritizedRecipe);
+end
+
+rule "Filter by calories"
+	agenda-group "recipes"
+	when
+		$recipeFilter: RecipeFilterDto($fromKcal: fromKcal, $toKcal: toKcal, fromKcal != null, toKcal != null )
+		$prioritizedRecipe: PrioritizedRecipe(recipe.calories < $fromKcal || recipe.calories > $toKcal)
+	then 
+		delete($prioritizedRecipe);
+end
+
+rule "Filter by preparation time"
+	agenda-group "recipes"
+	when
+		$recipeFilter: RecipeFilterDto($fromMins: fromMins, $toMins: toMins, fromMins != null, toMins != null)
+		$prioritizedRecipe: PrioritizedRecipe(recipe.preparationTime < $fromMins || recipe.preparationTime > $toMins)
+	then 
+		delete($prioritizedRecipe);
+end
+
+rule "Filter by number of people"
+	agenda-group "recipes"
+	when
+		$recipeFilter: RecipeFilterDto($fromPpl: fromPpl, $toPpl: toPpl, fromPpl != null, toPpl != null )
+		$prioritizedRecipe: PrioritizedRecipe($noOfPeople: recipe.noOfPeople, $noOfPeople < $fromPpl || $noOfPeople > $toPpl)
+	then 
+		delete($prioritizedRecipe);
+end

@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import sbnz.model.Recipe;
 
-public interface RecipeRepository extends JpaRepository<Recipe, Long>{
+public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 	
 	Recipe findByName(String name);
 }

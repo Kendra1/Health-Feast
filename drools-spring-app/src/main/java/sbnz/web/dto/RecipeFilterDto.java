@@ -106,4 +106,14 @@ public class RecipeFilterDto {
 	public void setToPpl(int toPpl) {
 		this.toPpl = toPpl;
 	}
+
+	@Override
+	public String toString() {
+		return "RecipeFilterDto [ingredients=" + ingredients + ", dietTypes=" + dietTypes + ", allergens=" + allergens
+				+ ", kitchenType=" + kitchenType + ", mealType=" + mealType + ", fromKcal=" + fromKcal + ", toKcal="
+				+ toKcal + ", fromMins=" + fromMins + ", toMins=" + toMins + ", fromPpl=" + fromPpl + ", toPpl=" + toPpl
+				+ "]";
+	}
+	
+	
 }

@@ -1,10 +1,15 @@
 package sbnz.model;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 @Entity
@@ -15,10 +20,15 @@ public class IngredientQuantity {
 	private Long id;
 	
 	@OneToOne
-	@JoinColumn(name="ingredient_id")
+	@JoinColumn(name = "ingredient_id")
 	private Ingredient ingredient;
 	
+	@ManyToMany(mappedBy = "ingredients")
+	private List<Recipe> recipes;
+	
 	private double quantity;
+	
+	private boolean specificIngredient;
 	
 	public IngredientQuantity() {}
 	
@@ -56,5 +66,13 @@ public class IngredientQuantity {
 
 	public void setQuantity(double quantity) {
 		this.quantity = quantity;
+	}
+
+	public boolean isSpecificIngredient() {
+		return specificIngredient;
+	}
+
+	public void setSpecificIngredient(boolean specificIngredient) {
+		this.specificIngredient = specificIngredient;
 	}
 }
