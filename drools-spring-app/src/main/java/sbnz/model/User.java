@@ -44,6 +44,8 @@ public class User extends Person {
 	
 	@Transient
 	private double activityCount;
+	@Transient
+	private String warningForCalories;
 	
 	@OneToMany(mappedBy = "user")
 	private List<MealHistory> mealHistories;
@@ -199,4 +201,13 @@ public class User extends Person {
 	public void setCaloriesForStagnate(Double caloriesForStagnate) {
 		this.caloriesForStagnate = caloriesForStagnate;
 	}
+
+	public String getWarningForCalories() {
+		return warningForCalories;
+	}
+
+	public void setWarningForCalories(String warningForCalories) {
+		this.warningForCalories = warningForCalories;
+	}
+	
 }

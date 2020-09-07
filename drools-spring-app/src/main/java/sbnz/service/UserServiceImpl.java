@@ -3,7 +3,9 @@ package sbnz.service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
@@ -101,50 +103,27 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public String getDailyCaloriesStatus(Authentication authentication) {
+	public Map<String, String> getDailyCaloriesStatus(Authentication authentication, String date) {
+		
+		User user = getUserFromAuthentication(authentication);
+		LocalDate localDate = convertStringToLocalDate(date);
+		MealHistory dailyMealHistory = new MealHistory();
+		
 		KieSession kieSession = kieContainer.newKieSession();
-		
-		User user = new User();
-		user.setRecommendedDailyCalories(2000.0);
-		
-		Ingredient ing1 = new Ingredient();
-		ing1.setCalories(100);
-		
-		Ingredient ing2 = new Ingredient();
-		ing2.setCalories(200);
-		
-		Recipe recipe = new Recipe();
-		List<IngredientQuantity> ingredients = new ArrayList<>();
-		ingredients.add(new IngredientQuantity(ing1, 5));
-		recipe.setIngredients(ingredients);
-		
-		IngredientQuantity meal1 = new IngredientQuantity();
-		meal1.setIngredient(ing1);
-		meal1.setQuantity(2);
-		
-		IngredientQuantity meal2 = new IngredientQuantity();
-		meal2.setIngredient(ing2);
-		meal2.setQuantity(3);
-		
-		List<IngredientQuantity> meals = new ArrayList<IngredientQuantity>();
-		meals.add(meal1);
-		meals.add(meal2);
-		meals.addAll(recipe.getIngredients());
-		
-		MealHistory mealHistoryObj = new MealHistory();
-		mealHistoryObj.setMeals(meals);
-	
-//		user.setMealHistory(mealHistoryObj);
-	
 		kieSession.insert(user);
-		kieSession.insert(mealHistoryObj);
+		kieSession.insert(localDate);
+		kieSession.insert(dailyMealHistory);
 		kieSession.getAgenda().getAgendaGroup("dailyCalories").setFocus();
 		kieSession.fireAllRules();		
 		kieSession.dispose();
 		
 		userRepository.save(user);
 		
-		return String.format("Daily intake of calories is: ", user.getCaloriesConsumed().toString());
+		Map <String, String> calorieWarning = new HashMap<>();
+		calorieWarning.put("calories", user.getCaloriesConsumed().toString());
+		calorieWarning.put("warning", user.getWarningForCalories());
+
+		return calorieWarning;
 	}
 
 	@Override
@@ -218,6 +197,7 @@ public class UserServiceImpl implements UserService {
 	
 	private LocalDate convertStringToLocalDate (String date) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		
 		return LocalDate.parse(date, formatter);
 	}
 }

@@ -1,5 +1,7 @@
 	package sbnz.web.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,8 +48,8 @@ public class UserController {
 	
 	@GetMapping("/dailyCaloriesStatus")
     @LoggedUser
-	public String getDailyCaloriesStatus(Authentication authentication) {
-		return userService.getDailyCaloriesStatus(authentication);
+	public Map<String, String> getDailyCaloriesStatus(Authentication authentication, @RequestParam("date") String date) {
+		return userService.getDailyCaloriesStatus(authentication, date);
 	}
 	
 	@PostMapping("/dailyMeal")

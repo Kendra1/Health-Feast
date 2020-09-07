@@ -1,5 +1,7 @@
 package sbnz.service;
 
+import java.util.Map;
+
 import org.springframework.security.core.Authentication;
 
 import sbnz.enumeration.UserStatus;
@@ -12,7 +14,7 @@ public interface UserService {
 
 	String getRecommendedCalories(String goal, Authentication authentication);
 
-	String getDailyCaloriesStatus(Authentication authentication);
+	Map<String, String> getDailyCaloriesStatus(Authentication authentication, String date);
 
 	UpdateUserDto updateUser(UpdateUserDto updatedUser, Authentication authentication);
 
