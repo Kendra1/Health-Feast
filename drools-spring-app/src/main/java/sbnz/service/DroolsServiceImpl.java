@@ -56,13 +56,24 @@ public class DroolsServiceImpl implements DroolsService {
 		kieSession.insert(allRecipes);
 		kieSession.getAgenda().getAgendaGroup("recipes").setFocus();
 		kieSession.fireAllRules();
+		kieSession.destroy();
 		
-		PrioritizedRecipes prioritizedRecipes = sortRecipesByPriority(pRecipes);
-		System.out.println("Filter " + recipeFilterDto.toString());
+		//PrioritizedRecipes sortedRecipes = sortRecipesByPriority(pRecipes);
+		
+		List<PrioritizedRecipe> prioritizedRecipes = new ArrayList<>();
+		prioritizedRecipes.addAll(sortRecipesByPriority(pRecipes).getRecipes());
+		System.out.println(prioritizedRecipes.size());
+
+		KieSession filterKieSession = kieContainer.newKieSession();
+		filterKieSession.insert(recipeFilterDto);
+		filterKieSession.insert(prioritizedRecipes);
+		filterKieSession.getAgenda().getAgendaGroup("recipes-filters").setFocus();
+		filterKieSession.fireAllRules();
+		System.out.println(prioritizedRecipes.size());
 
 		List<RecipeDto> recipesDto = new ArrayList<>();
 				
-		for (PrioritizedRecipe recipe: prioritizedRecipes.getRecipes()) {
+		for (PrioritizedRecipe recipe: prioritizedRecipes) {
 			List<IngredientDto> ingredientsDto = mapIngredientsToIngredientDto(recipe.getRecipe().getIngredients());
 			RecipeDto recipeDto = objectMapper.convertValue(recipe.getRecipe(), RecipeDto.class);
 			recipeDto.setIngredients(ingredientsDto);

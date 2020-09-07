@@ -9,12 +9,12 @@ public class RecipeFilterDto {
 	private List<String> allergens;
 	private String kitchenType;
 	private String mealType;
-	private int fromKcal;
-	private int toKcal;
-	private int fromMins;
-	private int toMins;
-	private int fromPpl;
-	private int toPpl;
+	private Integer fromKcal;
+	private Integer toKcal;
+	private Integer fromMins;
+	private Integer toMins;
+	private Integer fromPpl;
+	private Integer toPpl;
 
 	public RecipeFilterDto() {
 	}
@@ -59,51 +59,51 @@ public class RecipeFilterDto {
 		this.mealType = mealType;
 	}
 
-	public int getFromKcal() {
+	public Integer getFromKcal() {
 		return fromKcal;
 	}
 
-	public void setFromKcal(int fromKcal) {
+	public void setFromKcal(Integer fromKcal) {
 		this.fromKcal = fromKcal;
 	}
 
-	public int getToKcal() {
+	public Integer getToKcal() {
 		return toKcal;
 	}
 
-	public void setToKcal(int toKcal) {
+	public void setToKcal(Integer toKcal) {
 		this.toKcal = toKcal;
 	}
 
-	public int getFromMins() {
+	public Integer getFromMins() {
 		return fromMins;
 	}
 
-	public void setFromMins(int fromMins) {
+	public void setFromMins(Integer fromMins) {
 		this.fromMins = fromMins;
 	}
 
-	public int getToMins() {
+	public Integer getToMins() {
 		return toMins;
 	}
 
-	public void setToMins(int toMins) {
+	public void setToMins(Integer toMins) {
 		this.toMins = toMins;
 	}
 
-	public int getFromPpl() {
+	public Integer getFromPpl() {
 		return fromPpl;
 	}
 
-	public void setFromPpl(int fromPpl) {
+	public void setFromPpl(Integer fromPpl) {
 		this.fromPpl = fromPpl;
 	}
 
-	public int getToPpl() {
+	public Integer getToPpl() {
 		return toPpl;
 	}
 
-	public void setToPpl(int toPpl) {
+	public void setToPpl(Integer toPpl) {
 		this.toPpl = toPpl;
 	}
 

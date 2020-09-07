@@ -6,7 +6,7 @@ public class DailyMealDto {
 
 	private String date;
 	private List<IngredientDto> ingredientsDto;
-	
+	 
 	public String getDate() {
 		return date;
 	}

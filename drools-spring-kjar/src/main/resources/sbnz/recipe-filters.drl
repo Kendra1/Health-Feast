@@ -9,59 +9,85 @@ import sbnz.service.RecipeService;
 import sbnz.model.Recipe;
 import sbnz.model.IngredientQuantity;
 
+
 rule "Filter by allergens"
-	agenda-group "recipes"
+	agenda-group "recipes-filters"
+	no-loop
+	lock-on-active
 	when
-		$prioritizedRecipe: PrioritizedRecipe( $ingredients: recipe.ingredients )
         $recipeFilter: RecipeFilterDto( $allergens:allergens, allergens != null )
-		$numOfAllergens : Number (intValue > 0) from accumulate($i:IngredientQuantity($name : ingredient.name, $allergens.contains($name)) from $ingredients,
-        	count($i)
-        )
+        $prioritizedRecipes: List()
+		$items : List() from accumulate ( $prioritizedRecipe : PrioritizedRecipe ($ingredients: recipe.ingredients) from $prioritizedRecipes,
+			init( List<PrioritizedRecipe> deleteRecipes = new ArrayList(); ),
+			action(  for (Object ingQuantity : $ingredients){
+						if ( $allergens.contains( ((IngredientQuantity) ingQuantity).getIngredient().getName()) ){
+							deleteRecipes.add($prioritizedRecipe);
+						}
+					}
+			 ),
+			result ( deleteRecipes )
+			)
 	then 
-		delete($prioritizedRecipe);
+		modify ( $prioritizedRecipes ) { removeAll($items); }
+
 end
 
 rule "Filter by kitchen type"
-	agenda-group "recipes"
+	agenda-group "recipes-filters"
+	no-loop
+	lock-on-active
 	when
 		$recipeFilter: RecipeFilterDto($kitchenType: kitchenType, kitchenType != null)
-		$prioritizedRecipe: PrioritizedRecipe(recipe.kitchenType.toString() != $kitchenType)
+		$prioritizedRecipes: List()
+		$items : List () from collect( PrioritizedRecipe( recipe.kitchenType.toString() != $kitchenType) from $prioritizedRecipes)
 	then 
-		delete($prioritizedRecipe);
+		modify ( $prioritizedRecipes ) { removeAll($items); }
 end
 
 rule "Filter by meal type"
-	agenda-group "recipes"
+	agenda-group "recipes-filters"
+	no-loop
+	lock-on-active
 	when
 		$recipeFilter: RecipeFilterDto($mealType: mealType, mealType != null)
-		$prioritizedRecipe: PrioritizedRecipe(recipe.mealType.toString() != $mealType)
+		$prioritizedRecipes: List()
+		$items : List () from collect( PrioritizedRecipe(recipe.mealType.toString() != $mealType) from $prioritizedRecipes)
 	then 
-		delete($prioritizedRecipe);
+		modify ( $prioritizedRecipes ) { removeAll($items); }
 end
 
 rule "Filter by calories"
-	agenda-group "recipes"
+	agenda-group "recipes-filters"
+	no-loop
+	lock-on-active
 	when
 		$recipeFilter: RecipeFilterDto($fromKcal: fromKcal, $toKcal: toKcal, fromKcal != null, toKcal != null )
-		$prioritizedRecipe: PrioritizedRecipe(recipe.calories < $fromKcal || recipe.calories > $toKcal)
+		$prioritizedRecipes: List()
+		$items : List () from collect( PrioritizedRecipe(recipe.calories < $fromKcal || recipe.calories > $toKcal) from $prioritizedRecipes)
 	then 
-		delete($prioritizedRecipe);
+		modify ( $prioritizedRecipes ) { removeAll($items); }
 end
 
 rule "Filter by preparation time"
-	agenda-group "recipes"
+	agenda-group "recipes-filters"
+	no-loop
+	lock-on-active
 	when
 		$recipeFilter: RecipeFilterDto($fromMins: fromMins, $toMins: toMins, fromMins != null, toMins != null)
-		$prioritizedRecipe: PrioritizedRecipe(recipe.preparationTime < $fromMins || recipe.preparationTime > $toMins)
+		$prioritizedRecipes: List()
+		$items : List () from collect( PrioritizedRecipe(recipe.preparationTime < $fromMins || recipe.preparationTime > $toMins) from $prioritizedRecipes)
 	then 
-		delete($prioritizedRecipe);
+		modify ( $prioritizedRecipes ) { removeAll($items); }
 end
 
 rule "Filter by number of people"
-	agenda-group "recipes"
+	agenda-group "recipes-filters"
+	no-loop
+	lock-on-active
 	when
 		$recipeFilter: RecipeFilterDto($fromPpl: fromPpl, $toPpl: toPpl, fromPpl != null, toPpl != null )
-		$prioritizedRecipe: PrioritizedRecipe($noOfPeople: recipe.noOfPeople, $noOfPeople < $fromPpl || $noOfPeople > $toPpl)
+		$prioritizedRecipes: List()
+		$items : List () from collect( PrioritizedRecipe($noOfPeople: recipe.noOfPeople, $noOfPeople < $fromPpl || $noOfPeople > $toPpl) from $prioritizedRecipes)
 	then 
-		delete($prioritizedRecipe);
+		modify ( $prioritizedRecipes ) { removeAll($items); }
 end
