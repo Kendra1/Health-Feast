@@ -31,6 +31,7 @@ import sbnz.model.User;
 import sbnz.repository.IngredientQuantityRepository;
 import sbnz.repository.IngredientRepository;
 import sbnz.repository.MealHistoryRepository;
+import sbnz.repository.RecipeRepository;
 import sbnz.repository.UserRepository;
 import sbnz.util.LocalDateConverter;
 import sbnz.web.dto.DailyMealDto;
@@ -44,19 +45,22 @@ public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
 	private final ObjectMapper objectMapper;
 	private final IngredientQuantityRepository ingredientQuantityRepository;
-	private final IngredientRepository ingredientRepository;
+	private final IngredientService ingredientService;
 	private final MealHistoryRepository mealHistoryRepository;
+	private final RecipeService recipeService;
 
 	@Autowired
 	public UserServiceImpl(KieContainer kieContainer, UserRepository userRepository, 
-			ObjectMapper objectMapper, IngredientRepository ingredientRepository,
-			MealHistoryRepository mealHistoryRepository, IngredientQuantityRepository ingredientQuantityRepository) {
+			ObjectMapper objectMapper, IngredientService ingredientService,
+			MealHistoryRepository mealHistoryRepository, IngredientQuantityRepository ingredientQuantityRepository,
+			RecipeService recipeService) {
 		this.kieContainer = kieContainer;
 		this.userRepository = userRepository;
 		this.objectMapper = objectMapper;
-		this.ingredientRepository = ingredientRepository;
+		this.ingredientService = ingredientService;
 		this.mealHistoryRepository = mealHistoryRepository;
 		this.ingredientQuantityRepository = ingredientQuantityRepository;
+		this.recipeService = recipeService;
 	}
 
 	@Override
@@ -121,7 +125,7 @@ public class UserServiceImpl implements UserService {
 		
 		Map <String, String> calorieWarning = new HashMap<>();
 		calorieWarning.put("calories", user.getCaloriesConsumed().toString());
-		calorieWarning.put("warning", user.getWarningForCalories());
+		calorieWarning.put("warning", user.getWarningForCalories() != null ? user.getWarningForCalories() : "");
 
 		return calorieWarning;
 	}
@@ -156,19 +160,31 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public DailyMealDto saveDailyMeal(DailyMealDto dailyMealDto, Authentication authentication) {
+	public Double saveDailyMeal(DailyMealDto dailyMealDto, Authentication authentication) {
 		User user = getUserFromAuthentication(authentication);
 		LocalDate date =  convertStringToLocalDate(dailyMealDto.getDate());
-				
-		List <IngredientQuantity> dailyMeals = dailyMealDto.getIngredientsDto().stream().map(ingredientDto -> {
-			Ingredient ingredient = ingredientRepository.findById(ingredientDto.getId()).orElseThrow(EntityNotFoundException::new);
-			IngredientQuantity ingredientQuantity = new IngredientQuantity(ingredient, ingredientDto.getQuantity());
+		
+		List <IngredientQuantity> dailyMeals = new ArrayList<>();
+		
+		Recipe recipe;
+		if (dailyMealDto.getTypeOfMeal().equalsIgnoreCase("recipe")) {
+			recipe = recipeService.findRecipeByName(dailyMealDto.getName());
+			
+			for (int i = 0; i < dailyMealDto.getQuantity(); i++) {
+				dailyMeals.addAll(recipe.getIngredients());
+			}
+		}
+		
+		Ingredient ingredient;
+		if (dailyMealDto.getTypeOfMeal().equalsIgnoreCase("ingredient")) {
+			ingredient = ingredientService.findByName(dailyMealDto.getName());
+			IngredientQuantity ingredientQuantity = new IngredientQuantity(ingredient, dailyMealDto.getQuantity());
 			
 			ingredientQuantityRepository.save(ingredientQuantity);
-			
-			return ingredientQuantity;
-		}).collect(Collectors.toList());
+			dailyMeals.add(ingredientQuantity);
+		}
 		
+		//find or create daily meal history
 		MealHistory dailyMealHistory = new MealHistory();
 		KieSession kieSession = kieContainer.newKieSession();
 		kieSession.insert(user);
@@ -181,10 +197,13 @@ public class UserServiceImpl implements UserService {
 		
 		mealHistoryRepository.save(dailyMealHistory);
 		
+		//update daily meal history and consumed calories
 		KieSession kieSession2 = kieContainer.newKieSession();
 		kieSession2.getAgenda().getAgendaGroup("dailyCalories").setFocus();
 		kieSession2.insert(dailyMeals);
 		kieSession2.insert(dailyMealHistory);
+		kieSession2.insert(user);
+		kieSession2.insert(date);
 		kieSession2.fireAllRules();		
 		kieSession2.dispose();
 		kieSession2.destroy();
@@ -192,7 +211,7 @@ public class UserServiceImpl implements UserService {
 		mealHistoryRepository.save(dailyMealHistory);
         userRepository.save(user);
 		
-		return dailyMealDto;
+		return user.getCaloriesConsumed();
 	}
 	
 	private LocalDate convertStringToLocalDate (String date) {

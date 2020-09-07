@@ -24,4 +24,9 @@ public class IngredientServiceImpl implements IngredientService{
 		return ingredients.stream().map(ingredient -> ingredient.getName()).collect(Collectors.toList());
 	}
 
+	@Override
+	public Ingredient findByName(String name) {
+		return ingredientRepository.findByName(name);
+	}
+
 }

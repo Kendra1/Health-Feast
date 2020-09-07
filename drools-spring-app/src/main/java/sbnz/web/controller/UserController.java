@@ -54,7 +54,7 @@ public class UserController {
 	
 	@PostMapping("/dailyMeal")
 	@LoggedUser
-	public DailyMealDto saveDailyMeal(@RequestBody DailyMealDto dailyMealDto, Authentication authentication) {
+	public Double saveDailyMeal(@RequestBody DailyMealDto dailyMealDto, Authentication authentication) {
 		return userService.saveDailyMeal(dailyMealDto, authentication);	
 	}
 

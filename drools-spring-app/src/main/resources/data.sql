@@ -48,8 +48,8 @@ insert into recipe_ingredient_quantity (recipe_id, ingredient_id) values
 (3, 5);
 
 -- user
-insert into user(id, name, last_name, email, password, role, enabled, account_balance, weight, height, gender, activity, purchase_points, goal, birth_date) values
-(1, "user", "last name of user", "user@email.example", "pass", "ROLE_USER", 1, 0.0, 150.0, 190.0, "MALE", "HEAVY", 600.0, "STAGNATE", date('1990-02-02'));
+insert into user(id, name, last_name, email, password, role, enabled, account_balance, weight, height, gender, activity, purchase_points, goal) values
+(1, "user", "last name of user", "user@email.example", "pass", "ROLE_USER", 1, 0.0, 150.0, 190.0, "MALE", "HEAVY", 600.0, "STAGNATE");
 
 ----enter meal history for one date
 --insert into meal_history(id, date, user_id) values

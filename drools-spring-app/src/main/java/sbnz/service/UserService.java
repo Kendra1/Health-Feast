@@ -24,5 +24,5 @@ public interface UserService {
 
 	String getRecommendedIntake(Authentication authentication);
 
-	DailyMealDto saveDailyMeal(DailyMealDto dailyMealdDto, Authentication authentication);	
+	Double saveDailyMeal(DailyMealDto dailyMealdDto, Authentication authentication);	
 }
