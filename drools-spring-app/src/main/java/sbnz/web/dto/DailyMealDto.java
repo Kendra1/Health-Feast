@@ -1,22 +1,39 @@
 package sbnz.web.dto;
 
-import java.util.List;
-
 public class DailyMealDto {
 
 	private String date;
-	private List<IngredientDto> ingredientsDto;
-	 
+	
+	private String name;
+	
+	private String typeOfMeal;
+	
+	private Double quantity;
+	
+	public DailyMealDto() {}
+	
 	public String getDate() {
 		return date;
 	}
 	public void setDate(String date) {
 		this.date = date;
 	}
-	public List<IngredientDto> getIngredientsDto() {
-		return ingredientsDto;
+	public String getName() {
+		return name;
 	}
-	public void setIngredientsDto(List<IngredientDto> ingredientsDto) {
-		this.ingredientsDto = ingredientsDto;
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getTypeOfMeal() {
+		return typeOfMeal;
+	}
+	public void setTypeOfMeal(String typeOfMeal) {
+		this.typeOfMeal = typeOfMeal;
+	}
+	public Double getQuantity() {
+		return quantity;
+	}
+	public void setQuantity(Double quantity) {
+		this.quantity = quantity;
 	}
 }

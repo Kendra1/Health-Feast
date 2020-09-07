@@ -48,8 +48,19 @@ insert into recipe_ingredient_quantity (recipe_id, ingredient_id) values
 (3, 5);
 
 -- user
-insert into user(id, name, last_name, email, password, role, enabled, account_balance, weight, gender, activity, purchase_points, goal) values
-(1, "user", "last name of user", "user@email.example", "pass", "ROLE_USER", 1, 0.0, 150.0, "MALE", "HEAVY", 600.0, "STAGNATE");
+insert into user(id, name, last_name, email, password, role, enabled, account_balance, weight, height, gender, activity, purchase_points, goal) values
+(1, "user", "last name of user", "user@email.example", "pass", "ROLE_USER", 1, 0.0, 150.0, 190.0, "MALE", "HEAVY", 600.0, "STAGNATE");
+
+----enter meal history for one date
+--insert into meal_history(id, date, user_id) values
+--(1, '2020-05-09', 1);
+--
+--insert into meal_history_meals(meal_history_id, meals_id) values
+--(1, 1),
+--(1, 2),
+--(1, 3),
+--(1, 4),
+--(1, 5);
 
 --exercises
 insert into exercise(id, muscle, name) values 

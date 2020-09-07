@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 rule "Calculate entered daily calories"
 	agenda-group "dailyCalories"
-	no-loop true
+	no-loop
 	when 
 		$date: LocalDate()
 		$user: User()
@@ -21,15 +21,15 @@ rule "Calculate entered daily calories"
 		 	$total: sum($calories * $quantity)
 		 )
 	then
-		$user.setCaloriesConsumed($total);
-		update($user);
-		System.out.println("Calculate meal ");
+		modify ( $user ) { setCaloriesConsumed($total); }		
+		System.out.println("Konzumirano " + $total);
 		
 end
 
 rule "Find meal history for specific user on specific day"
 	agenda-group "dailyCalories"
 	no-loop
+	lock-on-active
 	when
 		$user: User( $mealHistories : mealHistories )
 		$date: LocalDate()
@@ -38,9 +38,11 @@ rule "Find meal history for specific user on specific day"
 	then
 		if ($foundMealHistories.size() > 0) {
 			for (Object mealHistory : $foundMealHistories){
-				$dailyMealHistory = ( (MealHistory) mealHistory );
+				$dailyMealHistory.setId( ((MealHistory) mealHistory).getId() );
+				$dailyMealHistory.setMeals (((MealHistory) mealHistory).getMeals() );
+				$dailyMealHistory.setDate( ((MealHistory) mealHistory).getDate() );
+				$dailyMealHistory.setUser( ((MealHistory) mealHistory).getUser() );
 				update ( $dailyMealHistory );
-				System.out.println("Found " + $foundMealHistories.size());
 			}
 		} else {
 			$dailyMealHistory.setDate($date);
@@ -54,12 +56,13 @@ end
 rule "Insert daily meal into users meal history for that day"
 	agenda-group "dailyCalories"
 	no-loop
+	lock-on-active
 	when
 		$dailyMealHistory: MealHistory( $meals : meals )
 		$dailyMeals : List()
 	then
 		$meals.addAll($dailyMeals);
-		update ($dailyMealHistory);
+		update ( $dailyMealHistory );
 		System.out.println("Add meals " + $meals.size());
 		
 end
@@ -69,7 +72,7 @@ rule "Warning: daily intake of calories is passed"
 	when 
 		$user: User( caloriesConsumed != null, recommendedDailyCalories!= null, caloriesConsumed > recommendedDailyCalories, $excess: (caloriesConsumed - recommendedDailyCalories))
 	then
-		System.out.println("You passed your daily intake of calories for " + $excess);
+		modify ( $user ) { setWarningForCalories(String.format("You passed your daily intake of calories for %s calories.", $excess)); }
 end
 
 
@@ -78,5 +81,5 @@ rule "Left number of calories to take today"
 	when 
 		$user: User( caloriesConsumed != null, recommendedDailyCalories!= null, caloriesConsumed < recommendedDailyCalories, $leftCalories: (recommendedDailyCalories - caloriesConsumed))
 	then
-		System.out.println("It is left " + $leftCalories + " calories to take today");
+		modify ( $user ) { setWarningForCalories(String.format("It is left %s calories to take today", $leftCalories)); }
 end
