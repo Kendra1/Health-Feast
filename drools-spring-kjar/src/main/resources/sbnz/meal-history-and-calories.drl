@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 rule "Calculate entered daily calories"
 	agenda-group "dailyCalories"
-	no-loop true
+	no-loop
 	when 
 		$date: LocalDate()
 		$user: User()
@@ -22,8 +22,8 @@ rule "Calculate entered daily calories"
 		 )
 	then
 		$user.setCaloriesConsumed($total);
-		update($user);
-		System.out.println("Calculate meal ");
+		update($user);		
+		System.out.println("Konzumirano " + $total);
 		
 end
 
@@ -69,7 +69,7 @@ rule "Warning: daily intake of calories is passed"
 	when 
 		$user: User( caloriesConsumed != null, recommendedDailyCalories!= null, caloriesConsumed > recommendedDailyCalories, $excess: (caloriesConsumed - recommendedDailyCalories))
 	then
-		System.out.println("You passed your daily intake of calories for " + $excess);
+		modify ( $user ) { setWarningForCalories(String.format("You passed your daily intake of calories for %s calories.", $ecxess)); }
 end
 
 
@@ -78,5 +78,5 @@ rule "Left number of calories to take today"
 	when 
 		$user: User( caloriesConsumed != null, recommendedDailyCalories!= null, caloriesConsumed < recommendedDailyCalories, $leftCalories: (recommendedDailyCalories - caloriesConsumed))
 	then
-		System.out.println("It is left " + $leftCalories + " calories to take today");
+		modify ( $user ) { setWarningForCalories(String.format("It is left %s calories to take today", $leftCalories)); }
 end
