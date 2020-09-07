@@ -38,10 +38,9 @@ rule "Find workouts and priority"
 		$prioritizedWorkouts.addAll($value);
 		update ($prioritizedWorkouts);
 end
-/*
+
 rule "Sort workouts by priority"
 	agenda-group "workouts"
-	no-loop
 	when
     	$prioritizedWorkout: PrioritizedWorkout( $workout: workout, $priority: priority )
   		$prioritizedWorkouts: PrioritizedWorkouts( $workouts: workouts not contains $prioritizedWorkout )
@@ -49,4 +48,4 @@ rule "Sort workouts by priority"
 	then
     	$prioritizedWorkouts.getWorkouts().add( $prioritizedWorkout );
     	update ( $prioritizedWorkouts );
-end*/
+end

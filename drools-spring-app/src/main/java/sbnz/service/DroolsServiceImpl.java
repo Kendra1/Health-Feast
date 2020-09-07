@@ -57,19 +57,15 @@ public class DroolsServiceImpl implements DroolsService {
 		kieSession.getAgenda().getAgendaGroup("recipes").setFocus();
 		kieSession.fireAllRules();
 		kieSession.destroy();
-		
-		//PrioritizedRecipes sortedRecipes = sortRecipesByPriority(pRecipes);
-		
+				
 		List<PrioritizedRecipe> prioritizedRecipes = new ArrayList<>();
 		prioritizedRecipes.addAll(sortRecipesByPriority(pRecipes).getRecipes());
-		System.out.println(prioritizedRecipes.size());
 
 		KieSession filterKieSession = kieContainer.newKieSession();
 		filterKieSession.insert(recipeFilterDto);
 		filterKieSession.insert(prioritizedRecipes);
 		filterKieSession.getAgenda().getAgendaGroup("recipes-filters").setFocus();
 		filterKieSession.fireAllRules();
-		System.out.println(prioritizedRecipes.size());
 
 		List<RecipeDto> recipesDto = new ArrayList<>();
 				
@@ -109,7 +105,7 @@ public class DroolsServiceImpl implements DroolsService {
 		}
 		
 		PrioritizedWorkouts prioritizedWorkouts = new PrioritizedWorkouts();
-//		kieSession.insert(prioritizedWorkouts);
+		kieSession.insert(prioritizedWorkouts);
 		kieSession.getAgenda().getAgendaGroup("workouts").setFocus();
 		kieSession.fireAllRules();
 		
@@ -197,22 +193,21 @@ public class DroolsServiceImpl implements DroolsService {
 		kieSession.insert(allWorkouts);
 		kieSession.getAgenda().getAgendaGroup("workouts").setFocus();
 		kieSession.fireAllRules();
-
-		//PrioritizedWorkouts prioritizedWorkouts = sortWorkoutsByPriority(pWorkouts);		
 		
+		List<PrioritizedWorkout> prioritizedWorkouts = new ArrayList<>();
+		prioritizedWorkouts.addAll(sortWorkoutsByPriority(pWorkouts).getWorkouts());
+
 		//filter found workouts
 		KieSession kieSession1 = kieContainer.newKieSession();
 		kieSession1.insert(workoutFilterDto);
-		kieSession1.insert(pWorkouts);
+		kieSession1.insert(prioritizedWorkouts);
 		kieSession1.getAgenda().getAgendaGroup("workouts-filters").setFocus();
 		kieSession1.fireAllRules();
-		System.out.println(pWorkouts.size());
-		System.out.println("filter " + workoutFilterDto.getFromCaloriesBurnt());
-
+		System.out.println(prioritizedWorkouts.size());
 
 		List<WorkoutDto> workoutDtos = new ArrayList<>();
 				
-		for (PrioritizedWorkout workout: pWorkouts) {
+		for (PrioritizedWorkout workout: prioritizedWorkouts) {
 			List<ExerciseDto> exerciseDto = mapExerciseToExerciseDto(workout.getWorkout().getExercises());
 			
 			WorkoutDto workoutDto = objectMapper.convertValue(workout.getWorkout(), WorkoutDto.class);
