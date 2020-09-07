@@ -37,9 +37,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers("/api/auth/login");
         web.ignoring().antMatchers("/api/auth/register");
         web.ignoring().antMatchers("/api/auth/confirmAccount");
-        web.ignoring().antMatchers("/api/drools/recipes");
-        web.ignoring().antMatchers("/api/drools/workouts");
-
+        web.ignoring().antMatchers("/api/drools/recipesByName");
+        web.ignoring().antMatchers("/api/drools/recipe/{id}/warning");
     }
 
     @Bean
