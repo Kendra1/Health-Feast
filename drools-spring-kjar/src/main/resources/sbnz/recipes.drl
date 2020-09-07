@@ -14,11 +14,10 @@ import sbnz.model.IngredientQuantity;
 
 rule "Sort recipes by priority"
 	agenda-group "recipes"
-	no-loop
 	when
     	$prioritizedRecipe: PrioritizedRecipe( $recipe: recipe, $priority: priority )
   		$prioritizedRecipes: PrioritizedRecipes( $recipes: recipes not contains $prioritizedRecipe )
-    	not PrioritizedRecipe( this != $prioritizedRecipe, this not memberOf $recipes, priority < $priority )
+    	not PrioritizedRecipe( this != $prioritizedRecipe, this not memberOf $recipes, priority <= $priority )
 	then
     	$prioritizedRecipes.getRecipes().add( $prioritizedRecipe );
     	update ( $prioritizedRecipes );
@@ -49,10 +48,12 @@ rule "Find recipe and priority"
 					}
 				}
 				
-				//if recipe is specific, then priority is -1
-				int priority = count == -1 ? count : $recipeIngredients.size() / count;
-				PrioritizedRecipe prioritizedRecipe = new PrioritizedRecipe($recipe, priority);
-				pRecipes.add(prioritizedRecipe);
+				if (count > 0) {
+					//if recipe is specific, then priority is -1
+					int priority = count == -1 ? count : $recipeIngredients.size() / count;
+					PrioritizedRecipe prioritizedRecipe = new PrioritizedRecipe($recipe, priority);
+					pRecipes.add(prioritizedRecipe);
+				}
 				),
 			result(pRecipes))
 	then
